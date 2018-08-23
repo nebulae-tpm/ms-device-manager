@@ -1,0 +1,37 @@
+[
+    {
+        "name": "device-manager",
+        "src": "frontend/emi/device-manager",
+        "groups": [
+            {
+              "id": "SYSTEM",
+              "icon": "location_searching",
+              "translate": {
+                "en": "System",
+                "es": "Sistema"
+              },
+              "priority": 900
+            }
+          ],
+        "contents": [
+            {
+                "groupId": "SYSTEM",
+                "id": "device-manager",
+                "icon": "settings_applications",
+                "translate": {
+                    "en": "Device manager",
+                    "es": "Gestor de dispositivos"
+                },
+                "navURL": "/device-manager",
+                "path": "device-manager",
+                "loadChildren": "./main/content/device-manager/device-manager.module#DeviceManagerModule",
+                "priority": 3000,
+                "roles" : ["developer"],
+                "default" : false
+            }            
+        ],
+        "preBuildCommands": [],
+        "environmentVars": {
+        }
+    }
+]

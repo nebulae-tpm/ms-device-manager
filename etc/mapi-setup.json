@@ -1,0 +1,8 @@
+[
+    {
+        "name": "device-manager",
+        "type": "graphql",        
+        "src": "api/gateway/graphql/device-manager",
+        "preBuildCommands": []
+    }
+]
