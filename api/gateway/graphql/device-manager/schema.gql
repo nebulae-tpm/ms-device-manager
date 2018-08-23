@@ -4,9 +4,28 @@ type HelloWorldmsnamecamel{
   sn: String!  
 }
 
+"key value object"
+type DeviceManagerKeyValue{
+  "Item key"
+  key: String
+  "Item value"
+  value: String
+}
+
+type DeviceManagerTag{
+  "Tag name"
+  name: String
+  "Tag type"
+  type: String
+  "Tag attributes"
+  attributes: [DeviceManagerKeyValue]
+}
+
 type Query {
   "Hello world sample, please remove"
   getHelloWorldFrommsnamecamel: HelloWorldmsnamecamel
+  # "return Tags Array using paginator methods"
+  getTags(page: Int!, count: Int! ): [DeviceManagerTag]
 }
 
 type Subscription {

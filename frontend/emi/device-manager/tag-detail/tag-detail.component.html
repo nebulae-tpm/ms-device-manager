@@ -1,9 +1,3 @@
-<!-- <div class="page-layout blank p-24" fusePerfectScrollbar>
-  <h2> {{helloWorld}} </h2>
-  <h2>{{ helloWorldLabelQuery$ | async}}</h2>
-  <h2>{{ helloWorldLabelSubscription$ | async}}</h2>
-</div> -->
-
 <div id="device_tags" class="page-layout carded fullwidth" fusePerfectScrollbar>
 
   <!-- TOP BACKGROUND -->
@@ -46,36 +40,38 @@
 
       <mat-table class="events-table" [dataSource]="dataSource" fusePerfectScrollbar>
 
-        <!-- TAG NAME -->
+        <!-- ATTRIBUTE NAME -->
         <ng-container cdkColumnDef="attribute">
-          <mat-header-cell fxFlex="40" *cdkHeaderCellDef>{{ 'GENERAL_TABLE.NAME' | translate }}</mat-header-cell>
-          <mat-cell fxFlex="40" *cdkCellDef="let tag">
-            <div class="margin_right_left_5">
-              <span>{{tag.name}}</span>
-            </div>
+          <mat-header-cell *cdkHeaderCellDef>Attribute</mat-header-cell>
+          <mat-cell *cdkCellDef="let tag">
+            <mat-form-field floatPlaceholder="tag.editing ? ''">
+              <input [readonly]="false" placeholder="attribute" [(ngModel)]="tag.currentValue" matInput>
+            </mat-form-field>
           </mat-cell>
         </ng-container>
-        <!-- TAG NAME -->
+        <!-- ATTRIBUTE NAME -->
 
-        <!-- TAG TYPE -->
+        <!-- ATTRIBUTE VALUE -->
         <ng-container cdkColumnDef="value">
-          <mat-header-cell fxFlex="40" *cdkHeaderCellDef> {{ 'GENERAL_TABLE.TYPE' | translate }} </mat-header-cell>
-          <mat-cell fxFlex="40" *cdkCellDef="let tag">
-            <div class="margin_right_left_5">
-              <span>{{tag.type}}</span>
+          <mat-header-cell *cdkHeaderCellDef>Value</mat-header-cell>
+          <mat-cell *cdkCellDef="let tag">
+            <div fxLayout="column" fxLayoutAlign="center center">
+              {{tag.weight}}
             </div>
           </mat-cell>
         </ng-container>
-        <!-- TAG TYPE -->
+        <!-- ATTRIBUTE VALUE -->
 
         <!-- ACTIONS-->
         <ng-container cdkColumnDef="actions">
-          <mat-header-cell fxFlex="20" *cdkHeaderCellDef>{{'GENERAL_TABLE.ACTIONS' | translate }}</mat-header-cell>
-          <mat-cell fxFlex="20" *cdkCellDef="let tag">
-            <div  class="margin_right_left_5">
-
-              <button mat-icon-button (click)="editTag(tag)">
-                <mat-icon>remove_red_eye</mat-icon>
+          <mat-header-cell *cdkHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *cdkCellDef="let tag">
+            <div fxLayout="row" fxLayoutAlign="center center">
+              <button fxLayoutAlign="center center" mat-icon-button (click)="tag.editing ? tag.editing = true : tag.editing = false" >
+                <mat-icon>mode_edit</mat-icon>
+              </button>
+              <button mat-icon-button>
+                <mat-icon>check_circle</mat-icon>
               </button>
               <button mat-icon-button (click)="deleteElementFromTable(tag)">
                 <mat-icon>delete</mat-icon>
@@ -87,7 +83,7 @@
         <!-- ACTIONS-->
 
         <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *cdkRowDef="let tag; columns: displayedColumns;" class="mat-row" matRipple>
+        <mat-row *cdkRowDef="let event; columns: displayedColumns;" class="mat-row" matRipple>
         </mat-row>
 
       </mat-table>

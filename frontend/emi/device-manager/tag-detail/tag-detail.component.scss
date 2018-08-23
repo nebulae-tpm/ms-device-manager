@@ -37,19 +37,16 @@
     overflow: auto;
 
     .mat-header-row {
-      min-height: 64px;
+      min-height: 52px;
       padding: 0 12px !important;
+      height: 64px;
     }
 
     .mat-row {
       position: relative;
       cursor: pointer;
+      height: 52px;
       padding: 0 12px !important;
-      height: 84px;
     }
-  }
-
-  .margin_right_left_5{
-    margin-left: 15px; margin-right: 5px
   }
 }

@@ -6,6 +6,7 @@ import { FuseWidgetModule } from '../../../core/components/widget/widget.module'
 
 import { DeviceManagerService } from './device-manager.service';
 import { DeviceManagerComponent } from './device-manager.component';
+import { TagDetailComponent } from './tag-detail/tag-detail.component';
 
 const routes: Routes = [
   {
@@ -21,9 +22,13 @@ const routes: Routes = [
     FuseWidgetModule
   ],
   declarations: [
-    DeviceManagerComponent    
+    DeviceManagerComponent,
+    TagDetailComponent
   ],
-  providers: [ DeviceManagerService, DatePipe]
+  providers: [
+    DeviceManagerService, DatePipe
+  ],
+  entryComponents: [TagDetailComponent]
 })
 
 export class DeviceManagerModule {}
