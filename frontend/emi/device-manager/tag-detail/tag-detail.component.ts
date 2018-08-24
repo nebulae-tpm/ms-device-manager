@@ -1,28 +1,23 @@
+import { TagAttribute, Tag } from './../device-manager-tag-helpers';
 import { DeviceManagerService } from '../device-manager.service';
-import { Component, OnDestroy, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ElementRef, Inject, InjectionToken, ViewChild, NgZone } from '@angular/core';
 import { fuseAnimations } from '../../../../core/animations';
 import { Subscription } from 'rxjs/Subscription';
 import { FuseTranslationLoaderService } from '../../../../core/services/translation-loader.service';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import {take} from 'rxjs/operators';
+import { MatTableDataSource, MatPaginator, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { locale as english } from '../i18n/en';
 import { locale as spanish } from '../i18n/es';
+import { FormControl } from '@angular/forms';
+import { startWith, map } from 'rxjs/operators';
 
 export interface TableTags{
   name: string;
   type: string;
   atttubutes: number;
 }
-
-export interface AttributeItem {
-  attribute: string;
-  currentAttribute?: string;
-  value: string;
-  currentValue?: string;
-  editing?: boolean;
-}
-
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -31,41 +26,97 @@ export interface AttributeItem {
   styleUrls: ['./tag-detail.component.scss'],
   animations: fuseAnimations
 })
+
+
+
 export class TagDetailComponent implements OnInit, OnDestroy {
 
-  helloWorld: String = 'Hello World static';
-  helloWorldLabelQuery$: Rx.Observable<any>;
-  helloWorldLabelSubscription$: Rx.Observable<any>;
+  myControl = new FormControl();
 
-
-  // @ViewChild('filter') filter: ElementRef;
+  tagTypesOptions: string[] = [];
+  filteredOptions: Rx.Observable<string[]>;
 
   displayedColumns: string[] = ['attribute', 'value', 'actions'];
-  dataSource = new MatTableDataSource<AttributeItem>([
-    {attribute: 'Hydrogen', value: '1.0079', },
-    {attribute: 'Helium', value: '4.0026' },
-    {attribute: 'Lithium', value: '6.941' },
-    {attribute: 'Beryllium', value: '9.0122' }
-  ]);
+  dataSource = new MatTableDataSource<TagAttribute>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  tagElement: Tag;
+
+
   constructor(
+    private ngZone: NgZone,
+    public dialogRef: MatDialogRef<TagDetailComponent>,
     private deviceManagerService: DeviceManagerService,
+    @Inject(MAT_DIALOG_DATA) private dataInjected: {tag: Tag, tagTypes: string[] },
     private translationLoader: FuseTranslationLoaderService
    ) {
     this.translationLoader.loadTranslations(english, spanish);
+    this.tagElement = dataInjected.tag;
+    this.tagTypesOptions = dataInjected.tagTypes;
+    console.log('TAG INJECTED ==> ', dataInjected);
   }
 
 
   ngOnInit() {
-    this.helloWorldLabelQuery$ = this.deviceManagerService.getHelloWorld$();
-    this.helloWorldLabelSubscription$ = this.deviceManagerService.getEventSourcingMonitorHelloWorldSubscription$();
+    this.dataSource.data = this.tagElement.attributes;
 
-    this.dataSource.paginator = this.paginator;
+    this.filteredOptions = this.myControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.tagTypesOptions.filter(option => option.toLowerCase().includes(value.toLowerCase())))
+      );
   }
-
 
   ngOnDestroy() {
   }
 
+  deleteElementFromTable(tagAttribute: TagAttribute){
+    if (this.dataSource.data.length === 1){
+      this.dataSource.data = [{
+        key: '',
+        value: '',
+        editing: true,
+        currentValue: {
+          key: '',
+          value: ''
+        }
+      }];
+    }else{
+    this.dataSource.data = this.dataSource.data.filter(e => e.key !== tagAttribute.key).slice();
+
+    }
+  }
+
+  startToEditing(tagAttribute: TagAttribute){
+    tagAttribute.editing = true;
+    console.log(tagAttribute);
+    this.dataSource.data = this.dataSource.data.slice();
+  }
+
+  finishEditing(tagAttribute: TagAttribute){
+    console.log(tagAttribute);
+    if (tagAttribute.currentValue.key && tagAttribute.currentValue.value){
+      tagAttribute.editing = false;
+      tagAttribute.key = tagAttribute.currentValue.key;
+      tagAttribute.value = tagAttribute.currentValue.value;
+
+      this.dataSource.data = this.dataSource.data.slice();
+    }
+  }
+
+  addNewAttribute() {
+    if (this.dataSource.data.findIndex(e => e.editing) === -1) {
+      console.log('addNewAttribute ...');
+      this.dataSource.data.push({
+        key: '',
+        value: '',
+        editing: true,
+        currentValue: {
+          key: '',
+          value: ''
+        }
+      });
+      this.dataSource.data = this.dataSource.data;
+    }
+  }
 }

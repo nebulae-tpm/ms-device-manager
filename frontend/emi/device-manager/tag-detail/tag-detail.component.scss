@@ -37,16 +37,56 @@
     overflow: auto;
 
     .mat-header-row {
-      min-height: 52px;
+      min-height: 50px;
       padding: 0 12px !important;
-      height: 64px;
+      height: 50px;
     }
 
     .mat-row {
       position: relative;
       cursor: pointer;
-      height: 52px;
+      height: 70px;
       padding: 0 12px !important;
     }
+  }
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-container > * {
+  width: 100%;
+}
+
+.no-underline {
+  ::ng-deep .mat-input-underline {
+    display: none;
+  }
+}
+
+.event-form-dialog {
+  @include media-breakpoint("xs") {
+    width: 100%;
+  }
+
+  @include media-breakpoint-up("xs") {
+    width: 480px;
+  }
+
+  .mat-dialog-container {
+    padding: 0;
+  }
+
+  .dialog-content-wrapper {
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .primary-color-input,
+  .secondary-color-input {
+    padding: 6px 8px;
   }
 }

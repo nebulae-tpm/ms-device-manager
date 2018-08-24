@@ -1,96 +1,90 @@
-<div id="device_tags" class="page-layout carded fullwidth" fusePerfectScrollbar>
-
-  <!-- TOP BACKGROUND -->
-  <div class="top-bg mat-accent-bg"></div>
-  <!-- / TOP BACKGROUND -->
-
-  <!-- CENTER -->
-  <div class="center">
-
-    <!-- HEADER -->
-    <div class="header white-fg" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
-
-      <!-- APP TITLE -->
-      <div class="logo my-12 m-sm-0" fxLayout="row" fxLayoutAlign="start center">
-        <mat-icon class="logo-icon mr-16" *fuseIfOnDom [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">bookmark</mat-icon>
-        <span class="logo-text h1" *fuseIfOnDom [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">TAGS</span>
-      </div>
-      <!-- / APP TITLE -->
-
-      <!-- SEARCH -->
-      <div class="search-input-wrapper mx-12 m-md-0" fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
-        <label for="search" class="mr-8">
-          <mat-icon class="secondary-text">search</mat-icon>
-        </label>
-        <mat-form-field floatPlaceholder="never" fxFlex="1 0 auto">
-          <input id="search" matInput #filter placeholder="Search">
-        </mat-form-field>
-      </div>
-      <!-- / SEARCH -->
-
-      <button mat-raised-button [routerLink]="'/apps/e-commerce/products/new'" class="add-product-button mat-white-bg my-12 mt-sm-0">
-        <span>ADD NEW TAG</span>
+<div class="dialog-content-wrapper">
+  <mat-toolbar matDialogTitle class="mat-accent m-0">
+    <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+      <span *ngIf="tagElement.name  === '' " class="title dialog-title">{{ 'DIALOG.ADD_TAG' | translate }}</span>
+      <span *ngIf="tagElement.name  !== '' " class="title dialog-title">{{ 'DIALOG.EDIT_TAG' | translate }}</span>
+      <button mat-button class="mat-icon-button" (click)="dialogRef.close()" aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
       </button>
-
     </div>
-    <!-- / HEADER -->
+  </mat-toolbar>
 
-    <!-- CONTENT CARD -->
-    <div class="content-card mat-white-bg">
+  <div mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
+    <div class="example-container">
+      <mat-form-field>
+        <input matInput placeholder="{{ 'DIALOG.FORM_NAME'  | translate }}" [(ngModel)]="tagElement.name">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="{{ 'DIALOG.FORM_TYPE'  | translate }}" [formControl]="myControl" [(ngModel)]="tagElement.type" [matAutocomplete]="auto">
+      </mat-form-field>
 
-      <mat-table class="events-table" [dataSource]="dataSource" fusePerfectScrollbar>
-
-        <!-- ATTRIBUTE NAME -->
-        <ng-container cdkColumnDef="attribute">
-          <mat-header-cell *cdkHeaderCellDef>Attribute</mat-header-cell>
-          <mat-cell *cdkCellDef="let tag">
-            <mat-form-field floatPlaceholder="tag.editing ? ''">
-              <input [readonly]="false" placeholder="attribute" [(ngModel)]="tag.currentValue" matInput>
-            </mat-form-field>
-          </mat-cell>
-        </ng-container>
-        <!-- ATTRIBUTE NAME -->
-
-        <!-- ATTRIBUTE VALUE -->
-        <ng-container cdkColumnDef="value">
-          <mat-header-cell *cdkHeaderCellDef>Value</mat-header-cell>
-          <mat-cell *cdkCellDef="let tag">
-            <div fxLayout="column" fxLayoutAlign="center center">
-              {{tag.weight}}
-            </div>
-          </mat-cell>
-        </ng-container>
-        <!-- ATTRIBUTE VALUE -->
-
-        <!-- ACTIONS-->
-        <ng-container cdkColumnDef="actions">
-          <mat-header-cell *cdkHeaderCellDef>Actions</mat-header-cell>
-          <mat-cell *cdkCellDef="let tag">
-            <div fxLayout="row" fxLayoutAlign="center center">
-              <button fxLayoutAlign="center center" mat-icon-button (click)="tag.editing ? tag.editing = true : tag.editing = false" >
-                <mat-icon>mode_edit</mat-icon>
-              </button>
-              <button mat-icon-button>
-                <mat-icon>check_circle</mat-icon>
-              </button>
-              <button mat-icon-button (click)="deleteElementFromTable(tag)">
-                <mat-icon>delete</mat-icon>
-              </button>
-
-            </div>
-          </mat-cell>
-        </ng-container>
-        <!-- ACTIONS-->
-
-        <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *cdkRowDef="let event; columns: displayedColumns;" class="mat-row" matRipple>
-        </mat-row>
-
-      </mat-table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
     </div>
-    <!-- / CONTENT CARD -->
+
+    <mat-table class="events-table content-card" [dataSource]="dataSource" fusePerfectScrollbar>
+
+      <!-- ATTRIBUTE NAME -->
+      <ng-container cdkColumnDef="attribute">
+        <mat-header-cell *cdkHeaderCellDef>{{ 'DIALOG.TABLE_ATTRIBUTE' | translate }}</mat-header-cell>
+        <mat-cell *cdkCellDef="let tag">
+          <mat-form-field [ngClass]="{'no-underline': !tag.editing}" floatPlaceholder="{{ tag.editing? 'float': 'never' }}">
+            <input class="form-control" required [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_ATTRIBUTE' | translate }}" [(ngModel)]="tag.currentValue.key"
+              matInput>
+          </mat-form-field>
+        </mat-cell>
+      </ng-container>
+      <!-- ATTRIBUTE NAME -->
+
+      <!-- ATTRIBUTE VALUE -->
+      <ng-container cdkColumnDef="value">
+        <mat-header-cell *cdkHeaderCellDef>{{ 'DIALOG.TABLE_VALUE' | translate }}</mat-header-cell>
+        <mat-cell *cdkCellDef="let tag">
+          <mat-form-field [ngClass]="{'no-underline': !tag.editing}" floatPlaceholder="{{ tag.editing? 'float': 'never' }}">
+            <input required [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_VALUE' | translate }}" [(ngModel)]="tag.currentValue.value" matInput>
+          </mat-form-field>
+          <!-- <mat-form-field class="example-full-width">
+              <textarea matInput matInpur="Leave a comment"></textarea>
+            </mat-form-field>t placeholde -->
+        </mat-cell>
+      </ng-container>
+      <!-- ATTRIBUTE VALUE -->
+
+      <!-- ACTIONS-->
+      <ng-container cdkColumnDef="actions">
+        <mat-header-cell fxLayoutAlign="center center" *cdkHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *cdkCellDef="let tag">
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <button *ngIf="!tag.editing" fxLayoutAlign="center center" mat-icon-button (click)="startToEditing(tag)">
+              <mat-icon>mode_edit</mat-icon>
+            </button>
+            <button *ngIf="tag.editing" (click)="finishEditing(tag)" mat-icon-button [disabled]="tag.currentValue.key ==='' || !tag.currentValue.key || tag.currentValue.value === '' || !tag.currentValue.value">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteElementFromTable(tag)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <!-- ACTIONS-->
+
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let event; columns: displayedColumns;" class="mat-row" matRipple>
+      </mat-row>
+    </mat-table>
+
+    <div style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center" >
+        <button mat-fab color="primary" (click)="addNewAttribute()" >
+            <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+        </button>
+    </div>
+
+
+
   </div>
-  <!-- / CENTER -->
+
 </div>

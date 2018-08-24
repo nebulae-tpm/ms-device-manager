@@ -1,7 +1,7 @@
 "use strict";
 const Rx = require("rxjs");
 const eventSourcing = require("../../tools/EventSourcing")();
-const helloWorld = require("../../domain/HelloWorld")();
+const deviceManagerDA = require("../../domain/DeviceManager")();
 
 /**
  * Singleton instance
@@ -118,8 +118,8 @@ class EventStoreService {
 
       //Sample for handling event-sourcing events, please remove
       HelloWorldEvent: {
-        fn: helloWorld.handleHelloWorld$,
-        obj: helloWorld
+        fn: deviceManagerDA.handleHelloWorld$,
+        obj: deviceManagerDA
       },
 
     };

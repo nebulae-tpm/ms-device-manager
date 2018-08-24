@@ -1,7 +1,7 @@
 "use strict";
 
 const Rx = require("rxjs");
-const HelloWorldDA = require("../data/HelloWorldDA");
+const DeviceManagerDA = require("../data/DeviceManagerDA");
 const broker = require("../tools/broker/BrokerFactory")();
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 const {
@@ -14,7 +14,7 @@ const {
  */
 let instance;
 
-class HelloWorld {
+class DeviceManager {
   constructor() {
     this.initHelloWorldEventGenerator();
   }
@@ -25,7 +25,7 @@ class HelloWorld {
    */
   getHelloWorld$(request) {
     console.log(`request: request`)
-    return HelloWorldDA.getHelloWorld$()
+    return DeviceManagerDA.getHelloWorld$()
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.errorHandler$(err));
   }
@@ -42,7 +42,7 @@ class HelloWorld {
   initHelloWorldEventGenerator(){
     Rx.Observable.interval(1000)
     .take(120)
-    .mergeMap(id =>  HelloWorldDA.getHelloWorld$())    
+    .mergeMap(id => DeviceManagerDA.getHelloWorld$())    
     .mergeMap(evt => {
       return broker.send$(MATERIALIZED_VIEW_TOPIC, 'msnamecamelHelloWorldEvent',evt);
     }).subscribe(
@@ -92,7 +92,7 @@ class HelloWorld {
 
 module.exports = () => {
   if (!instance) {
-    instance = new HelloWorld();
+    instance = new DeviceManager();
     console.log(`${instance.constructor.name} Singleton created`);
   }
   return instance;

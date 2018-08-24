@@ -5,10 +5,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
-import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
 import { locale as english } from './i18n/en';
 import { locale as spanish } from './i18n/es';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
+import { Tag } from './device-manager-tag-helpers';
+import { mergeMap, toArray, map, tap, debounceTime, distinctUntilChanged, filter, mapTo } from 'rxjs/operators';
 
 export interface TableTags{
   name: string;
@@ -16,11 +18,6 @@ export interface TableTags{
   atttubutes: number;
 }
 
-export interface AttributeItem {
-  name: string;
-  type: string;
-  atributesQty?: string;
-}
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -30,31 +27,28 @@ export interface AttributeItem {
   animations: fuseAnimations
 })
 export class DeviceManagerComponent implements OnInit, OnDestroy {
-
-  helloWorld: String = 'Hello World static';
-  helloWorldLabelQuery$: Rx.Observable<any>;
-  helloWorldLabelSubscription$: Rx.Observable<any>;
+  allSubscriptions: Subscription[] = [];
 
 
-  // @ViewChild('filter') filter: ElementRef;
 
   dialogRef: any;
 
   displayedColumns: string[] = ['attribute', 'value', 'actions'];
-  dataSource = new MatTableDataSource<AttributeItem>([
-    // tslint:disable-next-line:max-line-length
-    { name: 'Cuenca1_DNS_AVANTEL, Cuenca1_DNS_AVANTEL,Cuenca1_DNS_AVANTEL,Cuenca1_DNS_AVANTEL', type: '285.369.26.55', },
-    { name: 'Cuenca2_DNS_TELCEL', type: '285.369.26.55', },
-    { name: 'Cuenca3_DNS_BellSouth', type: '285.369.26.55', },
-    { name: 'Cuenca4_DNS_CELUMOVIL', type: '285.369.26.55', },
-    { name: 'Cuenca5_DNS_T&T', type: '285.369.26.55', },
-    { name: 'Cuenca6_DNS_TELMEX', type: '285.369.26.55', },
-    { name: 'Cuenca7_DNS_OLA', type: '285.369.26.55', },
-    { name: 'Cuenca8_DNS_VIRGIN_MOBILE', type: '285.369.26.55', },
-    { name: 'Cuenca9_DNS_METRO', type: '285.369.26.55', },
-    { name: 'Cuenca1_DNS_MOVIL_EXITO', type: '285.369.26.55', }
-  ]);
+  dataSource = new MatTableDataSource<Tag>();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('filter') filter: ElementRef;
+  @ViewChild(MatSort) sort: MatSort;
+
+  tableSize: number;
+  page = 0;
+  count = 10;
+  filterText = "";
+  sortColumn = null;
+  sortOrder = null;
+  itemPerPage = "";
+
+
 
   constructor(
     public dialog: MatDialog,
@@ -66,19 +60,78 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.helloWorldLabelQuery$ = this.deviceManagerService.getHelloWorld$();
-    this.helloWorldLabelSubscription$ = this.deviceManagerService.getEventSourcingMonitorHelloWorldSubscription$();
 
     this.dataSource.paginator = this.paginator;
+
+    this.deviceManagerService.getTagsByPages$(0, 0)
+    .pipe(
+      mergeMap((tags: Tag[]) => this.loadRowDataInDataTable$(tags))
+    )
+    .subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => console.log(error),
+      () => console.log('Completed !!!!!')
+    );
+
+    this.allSubscriptions.push(
+      Rx.Observable.fromEvent(this.filter.nativeElement, 'keyup')
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        filter(() => this.filter.nativeElement),
+        map(() => this.filter.nativeElement.value.trim()  ),
+        tap((filterText => this.filterText = filterText)),
+        mergeMap(() => this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder) ),
+        mergeMap((responseArray) => this.loadRowDataInDataTable$(responseArray))
+      )
+      .subscribe(
+        (filterText) => {
+          console.log(this.filterText);
+          this.dataSource.data.length = 100;
+          this.dataSource.data = this.dataSource.data.slice();
+        },
+        (error) => console.log(error),
+        () => console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
+      )
+    );
+
+    this.allSubscriptions.push(
+      this.paginator.page.subscribe(pageChanged => {
+        this.page = pageChanged.pageIndex;
+        this.count = pageChanged.pageSize;
+        console.log(this.page, this.count);
+
+      })
+    );
+
   }
 
-  editTag(tag: any){
+
+
+
+  loadRowDataInDataTable$(tags: Tag[]){
+    return Rx.Observable.from(tags)
+    .pipe(
+      map((tag) =>  this.dataSource.data.push(tag)),
+      toArray(),
+      tap(() => this.dataSource.data = this.dataSource.data.slice())
+    );
+  }
+
+  editTag(tag: Tag) {
     console.log('TAG =>', tag);
+    tag.attributes = tag.attributes.map(item => ({ ...item, currentValue: { key: item.key, value: item.value } }));
     this.dialogRef = this.dialog.open(TagDetailComponent, {
       panelClass: 'event-form-dialog',
       data: {
-        action: 'new',
-        date  : Date.now()
+        tag: {
+          name: tag.name,
+          type: tag.type,
+          attributes: tag.attributes
+        },
+        tagTypes: ['CLARO_CONF', 'MOVILIDAD_FESTIVAL', 'SETTINGS_MOV', 'RED' ]
       }
     });
   }
@@ -87,8 +140,14 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     console.log('Deleting => ', tag.name);
   }
 
+  onNewTag(){
+    this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] });
+  }
+
 
   ngOnDestroy() {
+    this.allSubscriptions.forEach(s => s.unsubscribe());
   }
+
 
 }

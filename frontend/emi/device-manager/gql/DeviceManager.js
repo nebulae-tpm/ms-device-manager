@@ -6,11 +6,22 @@ import gql from "graphql-tag";
 export const getHelloWorld = gql`
   query getHelloWorldFrommsnamecamel{
     getHelloWorldFrommsnamecamel{
-      sn      
+      sn
     }
   }
 `;
-
+export const getTagByPages = gql`
+  query getTagsByPages($page: Int!, $count: Int!) {
+    getTags(page: $page, count: $count) {
+      name
+      type
+      attributes {
+        key
+        value
+      }
+    }
+  }
+`;
 
 //Hello world sample, please remove
 export const DeviceManagerHelloWorldSubscription = gql`

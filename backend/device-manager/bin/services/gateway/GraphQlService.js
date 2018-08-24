@@ -1,6 +1,6 @@
 "use strict";
 
-const helloWorld = require("../../domain/HelloWorld")();
+const deviceManager = require("../../domain/DeviceManager")();
 const broker = require("../../tools/broker/BrokerFactory")();
 const Rx = require("rxjs");
 const jsonwebtoken = require("jsonwebtoken");
@@ -125,7 +125,13 @@ class GraphQlService {
         messageType: "gateway.graphql.query.getHelloWorldFrommsnamecamel",
         onErrorHandler,
         onCompleteHandler
-      },      
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.query.getTags",
+        onErrorHandler,
+        onCompleteHandler
+      }   
     ];
   }
 
@@ -136,9 +142,13 @@ class GraphQlService {
     return {
       //Sample incoming request, please remove
       "gateway.graphql.query.getHelloWorldFrommsnamecamel": {
-        fn: helloWorld.getHelloWorld$,
-        obj: helloWorld
-      },      
+        fn: deviceManager.getHelloWorld$,
+        obj: deviceManager
+      },
+      "gateway.graphql.query.getTags": {
+        fn: deviceManager.getHelloWorld$,
+        obj: deviceManager
+      }
     };
   }
 

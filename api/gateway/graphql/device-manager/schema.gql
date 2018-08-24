@@ -12,6 +12,7 @@ type DeviceManagerKeyValue{
   value: String
 }
 
+"Configuration TAG"
 type DeviceManagerTag{
   "Tag name"
   name: String
@@ -19,6 +20,20 @@ type DeviceManagerTag{
   type: String
   "Tag attributes"
   attributes: [DeviceManagerKeyValue]
+}
+
+type DeviceManagerCommandResponse{
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type BasicInfoTag {
+  "Tag name"
+  name: String
+  "Tag type"
+  type: String
 }
 
 type Query {
@@ -31,4 +46,9 @@ type Query {
 type Subscription {
   "Hello world sample, please remove"
   msnamecamelHelloWorldSubscription: HelloWorldmsnamecamel  
+}
+
+type Mutation{
+  "Vreate new tag"
+  persistBasicInfoTag(input: BasicInfoTag): DeviceManagerCommandResponse
 }
