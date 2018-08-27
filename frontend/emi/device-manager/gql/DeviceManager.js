@@ -30,3 +30,21 @@ export const DeviceManagerHelloWorldSubscription = gql`
       sn
   }
 }`;
+
+export const PersistBasicInfoTag = gql`
+  mutation persistBasicInfoTag($input: BasicInfoTag) {
+    persistBasicInfoTag(input: $input) {
+      code
+      message
+    }
+  }
+`;
+
+export const addAttributeToTag = gql`
+  mutation addAttributeToTag($tagName: String!, $input: TagAttribute) {
+    deviceManagerAddAttributeToTag(tagName: $tagName, input: $input) {
+      code
+      message
+    }
+  }
+`;

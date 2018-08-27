@@ -10,7 +10,7 @@ import {take} from 'rxjs/operators';
 import { MatTableDataSource, MatPaginator, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { locale as english } from '../i18n/en';
 import { locale as spanish } from '../i18n/es';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
 
 export interface TableTags{
@@ -31,10 +31,18 @@ export interface TableTags{
 
 export class TagDetailComponent implements OnInit, OnDestroy {
 
-  myControl = new FormControl();
+  tagForm: FormGroup = new FormGroup({
+    basicTagInfo: new FormGroup({
+      name: new FormControl(null, [Validators.required]),
+      type: new FormControl(null, [Validators.required])
+    })
+  });
+
+
 
   tagTypesOptions: string[] = [];
   filteredOptions: Rx.Observable<string[]>;
+  basicInfoTagChecked = false;
 
   displayedColumns: string[] = ['attribute', 'value', 'actions'];
   dataSource = new MatTableDataSource<TagAttribute>();
@@ -44,7 +52,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
 
   constructor(
-    private ngZone: NgZone,
     public dialogRef: MatDialogRef<TagDetailComponent>,
     private deviceManagerService: DeviceManagerService,
     @Inject(MAT_DIALOG_DATA) private dataInjected: {tag: Tag, tagTypes: string[] },
@@ -52,15 +59,28 @@ export class TagDetailComponent implements OnInit, OnDestroy {
    ) {
     this.translationLoader.loadTranslations(english, spanish);
     this.tagElement = dataInjected.tag;
+    this.tagForm.get('basicTagInfo.name').setValue(this.tagElement.name);
+    this.tagForm.get('basicTagInfo.type').setValue(this.tagElement.type);
+
     this.tagTypesOptions = dataInjected.tagTypes;
     console.log('TAG INJECTED ==> ', dataInjected);
   }
 
 
   ngOnInit() {
-    this.dataSource.data = this.tagElement.attributes;
 
-    this.filteredOptions = this.myControl.valueChanges
+    this.dataSource.data =  this.dataInjected.tag.attributes;
+    if (this.dataSource.data.length === 0){
+      const defaultTagAttribute = {
+        key: '',
+        value: '',
+        editing: true,
+        currentValue: { key: '' , value: '' }
+      };
+      this.dataSource.data.push(defaultTagAttribute);
+    }
+
+    this.filteredOptions = this.tagForm.get('basicTagInfo.type').valueChanges
       .pipe(
         startWith(''),
         map(value => this.tagTypesOptions.filter(option => option.toLowerCase().includes(value.toLowerCase())))
@@ -118,5 +138,21 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       });
       this.dataSource.data = this.dataSource.data;
     }
+  }
+  saveBasicTagInfo(){
+    const tagFormRawValue = this.tagForm.getRawValue();
+    const basicInfoTag = {
+      name: tagFormRawValue.basicTagInfo.name,
+      type: tagFormRawValue.basicTagInfo.type
+    };
+    console.log(basicInfoTag);
+    this.deviceManagerService.createTagElement$(basicInfoTag).subscribe(
+      (result) => {
+        console.log(result);
+        this.basicInfoTagChecked = true;
+      },
+      (error) => console.log(error),
+      () => console.log()
+    );
   }
 }

@@ -20,7 +20,19 @@ class GraphQlService {
    * Starts GraphQL actions listener
    */
   start$() {
+    //default on error handler
+    const onErrorHandler = error => {
+      console.error("Error handling  GraphQl incoming event", error);
+      process.exit(1);
+    };
+
+    //default onComplete handler
+    const onCompleteHandler = () => {
+      () => console.log("GraphQlService incoming event subscription completed");
+    };
+
     return Rx.Observable.from(this.getSubscriptionDescriptors())
+    .map(aggregateEvent => {return { ...aggregateEvent, onErrorHandler, onCompleteHandler }})
       .map(params => this.subscribeEventHandler(params));
   }
 
@@ -104,34 +116,29 @@ class GraphQlService {
   /**
    * returns an array of broker subscriptions for listening to GraphQL requests
    */
-  getSubscriptionDescriptors() {
-    //default on error handler
-    const onErrorHandler = error => {
-      console.error("Error handling  GraphQl incoming event", error);
-      process.exit(1);
-    };
-
-    //default onComplete handler
-    const onCompleteHandler = () => {
-      () => console.log("GraphQlService incoming event subscription completed");
-    };
-    console.log("GraphQl Service starting ...");
-
+  getSubscriptionDescriptors() {   
     return [
-
       //Sample incoming request, please remove
       {
         aggregateType: "HelloWorld",
-        messageType: "gateway.graphql.query.getHelloWorldFrommsnamecamel",
-        onErrorHandler,
-        onCompleteHandler
+        messageType: "gateway.graphql.query.getHelloWorldFrommsnamecamel"
       },
       {
         aggregateType: "DeviceTag",
-        messageType: "gateway.graphql.query.getTags",
-        onErrorHandler,
-        onCompleteHandler
-      }   
+        messageType: "gateway.graphql.query.getTags"
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.persistBasicInfoTag"
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.addAttributeToTag"
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.deleteAttributeFromTag"
+      }
     ];
   }
 
@@ -146,7 +153,19 @@ class GraphQlService {
         obj: deviceManager
       },
       "gateway.graphql.query.getTags": {
-        fn: deviceManager.getHelloWorld$,
+        fn: deviceManager.getTags$,
+        obj: deviceManager
+      },
+      "gateway.graphql.mutation.persistBasicInfoTag":{
+        fn: deviceManager.persistBasicInfoTag$,
+        obj: deviceManager
+      },
+      "gateway.graphql.mutation.addAttributeToTag":{
+        fn: deviceManager.addAttributeToTag$,
+        obj: deviceManager
+      },
+      "gateway.graphql.mutation.deleteAttributeFromTag": {
+        fn: deviceManager.deleteAttributeFromTag$,
         obj: deviceManager
       }
     };

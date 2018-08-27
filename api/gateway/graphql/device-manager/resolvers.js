@@ -34,34 +34,14 @@ module.exports = {
         .toPromise();
     },
     getTags(root, args, context) {
-        // return broker.forwardAndGetReply$(
-        //     "DeviceTag",
-        //     "gateway.graphql.query.getTags",
-        //     { root, args, jwt: context.encodedToken },
-        //     2000
-        // )
-        // .mergeMap(response => getResponseFromBackEnd$(response))
-        // .toPromise();
-        return [
-            {
-                name: "MOVISTAR_APN",
-                type: "RED",
-                attributes: [
-                    { key: "Key_A", value: "Value_A" },
-                    { key: "Key_B", value: "Value_B" },
-                    { key: "Key_C", value: "Value_C" }
-                ]
-            },
-            {
-                name: "TIGO_APN",
-                type: "SETTINGS_MOV",
-                attributes: [
-                    { key: "Key_A", value: "Value_A" },
-                    { key: "Key_B", value: "Value_B" },
-                    { key: "Key_C", value: "Value_C" }
-                ]
-            }
-        ];
+        return broker.forwardAndGetReply$(
+            "DeviceTag",
+            "gateway.graphql.query.getTags",
+            { root, args, jwt: context.encodedToken },
+            2000
+        )
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
     }
   },
 
@@ -87,6 +67,28 @@ module.exports = {
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
     },
+    deviceManagerAddAttributeToTag(root, args, context){
+      return context.broker.forwardAndGetReply$(
+        "DeviceTag",
+        "gateway.graphql.mutation.addAttributeToTag",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        // .catch(err => handleError$(err, "persistBasicInfoTag"))
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
+    },
+    deviceManagerDeleteAttributeFromTag(root, args, context){
+      return context.broker.forwardAndGetReply$(
+        "DeviceTag",
+        "gateway.graphql.mutation.deleteAttributeFromTag",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        // .catch(err => handleError$(err, "persistBasicInfoTag"))
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
+    }
 
   },
   //// SUBSCRIPTIONS ///////

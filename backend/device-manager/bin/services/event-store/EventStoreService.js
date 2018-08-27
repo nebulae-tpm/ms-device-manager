@@ -62,7 +62,7 @@ class EventStoreService {
     const subscription =
       //MANDATORY:  AVOIDS ACK REGISTRY DUPLICATIONS
       eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType)
-        .mergeMap(() => eventSourcing.eventStore.getEventListener$(aggregateType, mbeKey))
+        .mergeMap(() => eventSourcing.eventStore.getEventListener$(aggregateType, mbeKey, false))
         .filter(evt => evt.et === eventType)
         .mergeMap(evt => Rx.Observable.concat(
           handler.fn.call(handler.obj, evt),
@@ -117,10 +117,14 @@ class EventStoreService {
     return {
 
       //Sample for handling event-sourcing events, please remove
-      HelloWorldEvent: {
-        fn: deviceManagerDA.handleHelloWorld$,
+      BasicInfoTagCreated: {
+        fn: deviceManagerDA.handleBasicTagInfoCreated$,
         obj: deviceManagerDA
       },
+      AttributeToTagAdded: {
+        fn: deviceManagerDA.handleAttributeToTagAdded$,
+        obj: deviceManagerDA
+      }
 
     };
   }
@@ -133,9 +137,13 @@ class EventStoreService {
 
       //Sample for assoc events and aggregates, please remove
       {
-        aggregateType: "HelloWorld",
-        eventType: "HelloWorldEvent"
+        aggregateType: "DeviceTag",
+        eventType: "BasicInfoTagCreated"
       },
+      {
+        aggregateType: "DeviceTag",
+        eventType: "AttributeToTagAdded"
+      }
 
     ]
   }

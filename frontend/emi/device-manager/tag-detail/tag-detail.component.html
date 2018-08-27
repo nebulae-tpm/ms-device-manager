@@ -1,31 +1,45 @@
 <div class="dialog-content-wrapper">
-  <mat-toolbar matDialogTitle class="mat-accent m-0">
-    <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
-      <span *ngIf="tagElement.name  === '' " class="title dialog-title">{{ 'DIALOG.ADD_TAG' | translate }}</span>
-      <span *ngIf="tagElement.name  !== '' " class="title dialog-title">{{ 'DIALOG.EDIT_TAG' | translate }}</span>
-      <button mat-button class="mat-icon-button" (click)="dialogRef.close()" aria-label="Close dialog">
-        <mat-icon>close</mat-icon>
-      </button>
+  <form [formGroup]="tagForm">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+      <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+        <span *ngIf="tagElement.name  === '' " class="title dialog-title">{{ 'DIALOG.ADD_TAG' | translate }}</span>
+        <span *ngIf="tagElement.name  !== '' " class="title dialog-title">{{ 'DIALOG.EDIT_TAG' | translate }}</span>
+        <button mat-button class="mat-icon-button" (click)="dialogRef.close()" aria-label="Close dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
+      <div *ngIf="!basicInfoTagChecked" formGroupName="basicTagInfo" class="example-container">
+        <!-- <form name="basicInfoTagForm" [formGroup]="basicInfoTagForm" class="business w-100-p" fxLayout="column" fxFlex> -->
+        <mat-form-field>
+          <input matInput placeholder="{{ 'DIALOG.FORM_NAME'  | translate }}" formControlName="name" required>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="{{ 'DIALOG.FORM_TYPE'  | translate }}" formControlName="type" [matAutocomplete]="auto">
+        </mat-form-field>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+
+        <div style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
+          <button mat-fab color="primary" (click)="saveBasicTagInfo()" [disabled]="!tagForm.valid">
+            <mat-icon aria-label="Example icon-button with a heart icon">check</mat-icon>
+          </button>
+        </div>
+        <!-- </form> -->
+      </div>
+
+
+
     </div>
-  </mat-toolbar>
+  </form>
 
-  <div mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
-    <div class="example-container">
-      <mat-form-field>
-        <input matInput placeholder="{{ 'DIALOG.FORM_NAME'  | translate }}" [(ngModel)]="tagElement.name">
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="{{ 'DIALOG.FORM_TYPE'  | translate }}" [formControl]="myControl" [(ngModel)]="tagElement.type" [matAutocomplete]="auto">
-      </mat-form-field>
 
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-autocomplete>
-    </div>
-
-    <mat-table class="events-table content-card" [dataSource]="dataSource" fusePerfectScrollbar>
+  <mat-table *ngIf="basicInfoTagChecked" class="events-table content-card" [dataSource]="dataSource" fusePerfectScrollbar>
 
       <!-- ATTRIBUTE NAME -->
       <ng-container cdkColumnDef="attribute">
@@ -44,7 +58,8 @@
         <mat-header-cell *cdkHeaderCellDef>{{ 'DIALOG.TABLE_VALUE' | translate }}</mat-header-cell>
         <mat-cell *cdkCellDef="let tag">
           <mat-form-field [ngClass]="{'no-underline': !tag.editing}" floatPlaceholder="{{ tag.editing? 'float': 'never' }}">
-            <input required [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_VALUE' | translate }}" [(ngModel)]="tag.currentValue.value" matInput>
+            <input required [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_VALUE' | translate }}" [(ngModel)]="tag.currentValue.value"
+              matInput>
           </mat-form-field>
           <!-- <mat-form-field class="example-full-width">
               <textarea matInput matInpur="Leave a comment"></textarea>
@@ -72,19 +87,16 @@
       </ng-container>
       <!-- ACTIONS-->
 
-      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <!-- <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row> -->
       <mat-row *cdkRowDef="let event; columns: displayedColumns;" class="mat-row" matRipple>
       </mat-row>
     </mat-table>
 
-    <div style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center" >
-        <button mat-fab color="primary" (click)="addNewAttribute()" >
+    <div *ngIf="basicInfoTagChecked" style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
+      <button mat-fab color="primary" (click)="addNewAttribute()">
             <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
         </button>
     </div>
 
-
-
-  </div>
 
 </div>

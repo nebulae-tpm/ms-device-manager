@@ -29,11 +29,19 @@ type DeviceManagerCommandResponse{
   message: String
 }
 
-type BasicInfoTag {
+input BasicInfoTag {
   "Tag name"
   name: String
   "Tag type"
   type: String
+}
+
+"Tag's attribute"
+input TagAttribute {
+  "attribute name"
+  name: String
+  "attribute value"
+  value: String
 }
 
 type Query {
@@ -49,6 +57,10 @@ type Subscription {
 }
 
 type Mutation{
-  "Vreate new tag"
+  "Create or update new tag"
   persistBasicInfoTag(input: BasicInfoTag): DeviceManagerCommandResponse
+  "Add an attribute to Tag"
+  deviceManagerAddAttributeToTag( tagName: String!, input: TagAttribute): DeviceManagerCommandResponse
+  "Delete an attribute from a tag"
+  deviceManagerDeleteAttributeFromTag(tagName: String): DeviceManagerCommandResponse
 }

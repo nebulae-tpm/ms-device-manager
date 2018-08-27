@@ -1,6 +1,8 @@
 "use strict";
 
 const Rx = require("rxjs");
+const eventSourcing = require("../tools/EventSourcing")();
+const Event = require("@nebulae/event-store").Event;
 const DeviceManagerDA = require("../data/DeviceManagerDA");
 const broker = require("../tools/broker/BrokerFactory")();
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
@@ -41,7 +43,7 @@ class DeviceManager {
 
   initHelloWorldEventGenerator(){
     Rx.Observable.interval(1000)
-    .take(120)
+    .take(10)
     .mergeMap(id => DeviceManagerDA.getHelloWorld$())    
     .mergeMap(evt => {
       return broker.send$(MATERIALIZED_VIEW_TOPIC, 'msnamecamelHelloWorldEvent',evt);
@@ -52,7 +54,73 @@ class DeviceManager {
     );
   }
 
+  getTags$({ args, jwt }, authToken){
+    console.log(args);
+    return DeviceManagerDA.getTags$(0,10, undefined, undefined, undefined)
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
 
+  }
+
+  persistBasicInfoTag$({ args, jwt }, authToken) {    
+
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "BasicInfoTagCreated",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args.input,
+        user: authToken.preferred_username
+      })
+    )
+      .map(r => {
+        return {
+          code: 200,
+          message: "persistBasicInfoTag$"
+        }
+      })
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
+  }
+
+  handleBasicTagInfoCreated$(evt){
+    console.log("========>", evt, "<=============");
+    // return Rx.Observable.of(evt);
+    return DeviceManagerDA.updateTag$(evt.data)
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerUpdatedSubscriptioin', result.ops))
+  }
+
+  addAttributeToTag$({args, jwt}, authToken){
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "attributeToTagAdded",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args.input,
+        user: authToken.preferred_username
+      })
+    )
+    .map(r => {
+      return {
+        code: 200,
+        message: "persistBasicInfoTag$"
+      }
+    })
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
+  }
+
+  handleAttributeToTagAdded$(){
+    
+  }
+ 
+
+  deleteAttributeFromTag$({args, jwt}, authToken){
+    console.log("addAttributeToTag", args);
+    return Rx.Observable.defer
+  }
 
 
   //#region  mappers for API responses

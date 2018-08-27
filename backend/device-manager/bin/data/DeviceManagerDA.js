@@ -84,7 +84,7 @@ class DeviceManagerDA {
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.updateOne(
       {name: tag.name},
-      {...tag},
+      { $set: { ...tag} },
       {upsert: true}
     ));
   }

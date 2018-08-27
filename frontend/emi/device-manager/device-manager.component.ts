@@ -122,7 +122,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
   editTag(tag: Tag) {
     console.log('TAG =>', tag);
-    tag.attributes = tag.attributes.map(item => ({ ...item, currentValue: { key: item.key, value: item.value } }));
+    tag.attributes = tag.attributes ? tag.attributes.map(item => ({ ...item, currentValue: { key: item.key, value: item.value } })) : [];
     this.dialogRef = this.dialog.open(TagDetailComponent, {
       panelClass: 'event-form-dialog',
       data: {

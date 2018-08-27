@@ -5,7 +5,9 @@ import { GatewayService } from '../../../api/gateway.service';
 import {
   getHelloWorld,
   DeviceManagerHelloWorldSubscription,
-  getTagByPages
+  getTagByPages,
+  PersistBasicInfoTag,
+  addAttributeToTag
 } from './gql/DeviceManager';
 
 @Injectable()
@@ -51,6 +53,30 @@ export class DeviceManagerService {
         }
       })
       .map(resp => resp.data.getTags);
+  }
+
+
+  createTagElement$(basicInfoTag: {name: string , type: string}){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: PersistBasicInfoTag,
+      variables: {
+        input: basicInfoTag
+      },
+      errorPolicy: 'all'
+    });
+  }
+
+  addAttributeToTag(tagName: string, attribute: {name: string, value: string}){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: PersistBasicInfoTag,
+      variables: {
+        tagName: tagName,
+        input: attribute
+      },
+      errorPolicy: 'all'
+    });
   }
 
 }
