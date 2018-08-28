@@ -49,6 +49,8 @@ type Query {
   getHelloWorldFrommsnamecamel: HelloWorldmsnamecamel
   # "return Tags Array using paginator methods"
   getTags(page: Int!, count: Int! ): [DeviceManagerTag]
+  "get all Tag types"
+  deviceManagerGetTagTypes: [String]
 }
 
 type Subscription {
@@ -64,5 +66,5 @@ type Mutation{
   "Add an attribute to Tag"
   deviceManagerAddAttributeToTag( tagName: String!, input: TagAttribute): DeviceManagerCommandResponse
   "Delete an attribute from a tag"
-  deviceManagerDeleteAttributeFromTag(tagName: String): DeviceManagerCommandResponse
+  deviceManagerDeleteTagAttribute(tagName: String!, tagAttributeName: String!): DeviceManagerCommandResponse
 }

@@ -8,15 +8,17 @@ import {
   getTagByPages,
   PersistBasicInfoTag,
   addAttributeToTag,
-  RemoveTag
+  RemoveTag,
+  RemoveTagAttribute,
+  getAllTagTypes
 } from './gql/DeviceManager';
 
 @Injectable()
 export class DeviceManagerService {
 
+  tagTypes: string[] = [];
 
   constructor(private gateway: GatewayService) {
-
   }
 
   /**
@@ -43,6 +45,16 @@ export class DeviceManagerService {
     })
     .map(resp => resp.data.msnamecamelHelloWorldSubscription.sn);
 }
+
+  fecthTagTypes() {
+    return this.gateway.apollo
+      .query<any>({
+        query: getAllTagTypes,
+        fetchPolicy: 'network-only',
+        errorPolicy: 'all'
+      })
+      .map(r => r.data.deviceManagerGetTagTypes);
+  }
 
   getTagsByPages$(page: number, count: number, filterText?: string, sortColumn?: string , sortOrder?: string) {
     return this.gateway.apollo
@@ -87,6 +99,17 @@ export class DeviceManagerService {
         input: attribute
       },
       errorPolicy: 'all'
+    });
+  }
+
+  removeTagAttribute(tagName, tagAttributeName){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: RemoveTagAttribute,
+      variables: {
+        tagName: tagName,
+        tagAttributeName: tagAttributeName
+      }
     });
   }
 

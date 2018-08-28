@@ -35,6 +35,11 @@ class DeviceManagerDA {
     });
   }
 
+  static getTagTypes$(){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.defer(() => collection.distinct('type'));
+  }
+
   /**
  * gets all the tags registered.
  *
@@ -69,7 +74,6 @@ class DeviceManagerDA {
         .limit(count)
         .toArray()
     ).map(val => {
-      console.log(val);
       return val;
     });
   }
@@ -92,6 +96,14 @@ class DeviceManagerDA {
   static deleteTag$({tagName}){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.deleteOne( {name: tagName} ));
+  }
+  static deleteTagAttribute$({tagName, tagAttributeName}){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.defer(() => collection.update(
+      { name: tagName },
+      { $pull: { 'attributes': { key: tagAttributeName } } },
+      { multi: false }
+    ))
   }
 
   static addAttributeToTag({tagName, input}){

@@ -10,6 +10,12 @@ export const getHelloWorld = gql`
     }
   }
 `;
+
+export const getAllTagTypes = gql`
+query getTagTypes{
+  deviceManagerGetTagTypes
+}`;
+
 export const getTagByPages = gql`
   query getTagsByPages($page: Int!, $count: Int!) {
     getTags(page: $page, count: $count) {
@@ -39,16 +45,27 @@ export const PersistBasicInfoTag = gql`
     }
   }
 `;
+
 export const RemoveTag = gql`
-mutation removeTag(
-  $tagName: String!){
-	deviceManagerDeleteTag(
-    tagName: $tagName
-  ){
-    code
-    message
+  mutation removeTag($tagName: String!) {
+    deviceManagerDeleteTag(tagName: $tagName) {
+      code
+      message
+    }
   }
-}`;
+`;
+
+export const RemoveTagAttribute = gql`
+  mutation removeTagAttribute($tagName: String!, $tagAttributeName: String!) {
+    deviceManagerDeleteTagAttribute(
+      tagName: $tagName
+      tagAttributeName: $tagAttributeName
+    ) {
+      code
+      message
+    }
+  }
+`;
 
 export const addAttributeToTag = gql`
   mutation addAttributeToTag($tagName: String!, $input: TagAttribute) {

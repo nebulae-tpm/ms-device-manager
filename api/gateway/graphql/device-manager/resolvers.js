@@ -42,6 +42,16 @@ module.exports = {
         )
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
+    },
+    deviceManagerGetTagTypes(root, args, context){
+      return broker.forwardAndGetReply$(
+        "DeviceTag",
+        "gateway.graphql.query.getTagsTypes",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
     }
   },
 
@@ -89,10 +99,10 @@ module.exports = {
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
     },
-    deviceManagerDeleteAttributeFromTag(root, args, context){
+    deviceManagerDeleteTagAttribute(root, args, context){
       return context.broker.forwardAndGetReply$(
         "DeviceTag",
-        "gateway.graphql.mutation.deleteAttributeFromTag",
+        "gateway.graphql.mutation.deleteTagAttribute",
         { root, args, jwt: context.encodedToken },
         2000
       )

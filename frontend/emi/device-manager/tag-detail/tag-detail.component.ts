@@ -90,8 +90,15 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  deleteElementFromTable(tagAttribute: TagAttribute){
-    if (this.dataSource.data.length === 1){
+  deleteElementFromTable(tagAttribute: TagAttribute) {
+    console.log(this.tagElement.name, tagAttribute.key);
+    this.deviceManagerService.removeTagAttribute(this.tagElement.name, tagAttribute.key)
+        .subscribe(
+          ok => { },
+          error => console.log(error),
+          () => console.log("Stream finished")
+    );
+    if (this.dataSource.data.length === 1) {
       this.dataSource.data = [{
         key: '',
         value: '',
@@ -101,9 +108,8 @@ export class TagDetailComponent implements OnInit, OnDestroy {
           value: ''
         }
       }];
-    }else{
-    this.dataSource.data = this.dataSource.data.filter(e => e.key !== tagAttribute.key).slice();
-
+    } else {
+      this.dataSource.data = this.dataSource.data.filter(e => e.key !== tagAttribute.key).slice();
     }
   }
 

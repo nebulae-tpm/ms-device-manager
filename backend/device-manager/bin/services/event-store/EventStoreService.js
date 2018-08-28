@@ -125,11 +125,14 @@ class EventStoreService {
         fn: deviceManagerDA.handleTagRemoved$,
         obj: deviceManagerDA
       },
-      AttributeToTagAdded: {
-        fn: deviceManagerDA.handleAttributeToTagAdded$,
+      TagAttributeAdded: {
+        fn: deviceManagerDA.handleTagAttributeAdded$,
+        obj: deviceManagerDA
+      },
+      TagAttributeRemoved: {
+        fn: deviceManagerDA.handleTagAttributeRemoved$,
         obj: deviceManagerDA
       }
-
     };
   }
 
@@ -150,7 +153,11 @@ class EventStoreService {
       },
       {
         aggregateType: "DeviceTag",
-        eventType: "AttributeToTagAdded"
+        eventType: "TagAttributeAdded"
+      },
+      {
+        aggregateType: "DeviceTag",
+        eventType: "TagAttributeRemoved"
       }
     ]
   }

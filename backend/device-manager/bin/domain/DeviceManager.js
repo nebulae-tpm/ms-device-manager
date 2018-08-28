@@ -84,9 +84,13 @@ class DeviceManager {
       .catch(err => this.errorHandler$(err));
   }
 
+  getTagsTypes$({ args, jwt }, authToken){
+    return DeviceManagerDA.getTagTypes$()
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
+  }
+
   handleBasicTagInfoCreated$(evt){
-    console.log("========>", evt, "<=============");
-    // return Rx.Observable.of(evt);
     return DeviceManagerDA.updateTag$(evt.data)
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerBasicTagInfoCreated', result.ops))
   }
@@ -122,7 +126,7 @@ class DeviceManager {
     console.log(args)
     return eventSourcing.eventStore.emitEvent$(
       new Event({
-        eventType: "AttributeToTagAdded",
+        eventType: "TagAttributeAdded",
         eventTypeVersion: 1,
         aggregateType: "DeviceTag",
         aggregateId: Date.now(),
@@ -140,17 +144,44 @@ class DeviceManager {
     .catch(err => this.errorHandler$(err));
   }
 
-  handleAttributeToTagAdded$(evt){
+  handleTagAttributeAdded$(evt){
     console.log(evt.data);
     // return Rx.Observable.of(evt.data);
     return DeviceManagerDA.addAttributeToTag(evt.data)
-
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeAdded', result.ops))
   }
  
 
-  deleteAttributeFromTag$({args, jwt}, authToken){
-    console.log("addAttributeToTag", args);
+  deleteTagAttribute$({args, jwt}, authToken){
+
+    console.log(args);
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "TagAttributeRemoved",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args,
+        user: authToken.preferred_username
+      })
+    )
+    .map(r => {
+      return {
+        code: 200,
+        message: "persistBasicInfoTag$"
+      }
+    })
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
   }
+
+  handleTagAttributeRemoved$(evt){
+    console.log("handleTagAttributeRemoved", evt.data);
+    return DeviceManagerDA.deleteTagAttribute$(evt.data)
+    .do( r => console.log(r.result))
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeRemoved', result.ops))
+  }
+
 
 
   //#region  mappers for API responses

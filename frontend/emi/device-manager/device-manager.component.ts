@@ -61,6 +61,13 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.deviceManagerService.fecthTagTypes()
+      .subscribe(
+        result => this.deviceManagerService.tagTypes = result,
+        error => console.log(error),
+        () => console.log("Finished !!")
+      );
+
     this.dataSource.paginator = this.paginator;
 
     this.deviceManagerService.getTagsByPages$(0, 0)
@@ -120,18 +127,19 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     );
   }
 
-  editTag(tag: Tag) {
+  editTag(tag: Tag, action: string) {
     console.log('TAG =>', tag);
     tag.attributes = tag.attributes ? tag.attributes.map(item => ({ ...item, currentValue: { key: item.key, value: item.value } })) : [];
     this.dialogRef = this.dialog.open(TagDetailComponent, {
       panelClass: 'event-form-dialog',
       data: {
+        action: action ? action : 'editing',
         tag: {
           name: tag.name,
           type: tag.type,
           attributes: tag.attributes
         },
-        tagTypes: ['CLARO_CONF', 'MOVILIDAD_FESTIVAL', 'SETTINGS_MOV', 'RED' ]
+        tagTypes: this.deviceManagerService.tagTypes
       }
     });
   }
@@ -150,7 +158,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   }
 
   onNewTag(){
-    this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] });
+    this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] }, 'creation');
   }
 
 

@@ -125,6 +125,10 @@ class GraphQlService {
       },
       {
         aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.query.getTagsTypes"
+      },
+      {
+        aggregateType: "DeviceTag",
         messageType: "gateway.graphql.query.getTags"
       },
       {
@@ -141,8 +145,12 @@ class GraphQlService {
       },
       {
         aggregateType: "DeviceTag",
-        messageType: "gateway.graphql.mutation.deleteAttributeFromTag"
-      }     
+        messageType: "gateway.graphql.mutation.deleteTagAttribute"
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.getTagsTypes"
+      }
     ];
   }
 
@@ -154,6 +162,10 @@ class GraphQlService {
       //Sample incoming request, please remove
       "gateway.graphql.query.getHelloWorldFrommsnamecamel": {
         fn: deviceManager.getHelloWorld$,
+        obj: deviceManager
+      },
+      "gateway.graphql.query.getTagsTypes": {
+        fn: deviceManager.getTagsTypes$,
         obj: deviceManager
       },
       "gateway.graphql.query.getTags": {
@@ -172,10 +184,14 @@ class GraphQlService {
         fn: deviceManager.addAttributeToTag$,
         obj: deviceManager
       },
-      "gateway.graphql.mutation.deleteAttributeFromTag": {
-        fn: deviceManager.deleteAttributeFromTag$,
+      "gateway.graphql.mutation.deleteTagAttribute": {
+        fn: deviceManager.deleteTagAttribute$,
         obj: deviceManager
-      }      
+      },
+      "gateway.graphql.mutation.getTagsTypes":{
+        fn: deviceManager.getTagsTypes$,
+        obj: deviceManager
+      }
     };
   }
 
