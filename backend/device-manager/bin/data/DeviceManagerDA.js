@@ -94,6 +94,14 @@ class DeviceManagerDA {
     return Rx.Observable.defer(() => collection.deleteOne( {name: tagName} ));
   }
 
+  static addAttributeToTag({tagName, input}){
+    const collection = mongoDB.db.collection(CollectionName);
+    return Rx.Observable.defer(() => collection.update(
+      { name: tagName },
+      { $push: { attributes: input } }
+    ) )
+  }
+
   static getOneTag$(namw){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.findOne( {name: name} ));

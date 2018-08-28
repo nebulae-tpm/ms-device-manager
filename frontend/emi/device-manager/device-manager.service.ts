@@ -78,10 +78,10 @@ export class DeviceManagerService {
     });
   }
 
-  addAttributeToTag(tagName: string, attribute: {name: string, value: string}){
+  addAttributeToTag(tagName: string, attribute: {key: string, value: string}){
     return this.gateway.apollo
     .mutate<any>({
-      mutation: PersistBasicInfoTag,
+      mutation: addAttributeToTag,
       variables: {
         tagName: tagName,
         input: attribute

@@ -116,9 +116,18 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   finishEditing(tagAttribute: TagAttribute){
     console.log(tagAttribute);
     if (tagAttribute.currentValue.key && tagAttribute.currentValue.value){
+
       tagAttribute.editing = false;
       tagAttribute.key = tagAttribute.currentValue.key;
       tagAttribute.value = tagAttribute.currentValue.value;
+
+      this.deviceManagerService
+      .addAttributeToTag(this.tagElement.name, {key: tagAttribute.key, value: tagAttribute.value})
+      .subscribe(
+        result => console.log(result),
+        error => console.log(error),
+        () => console.log("Stream finished")
+      );
 
       this.dataSource.data = this.dataSource.data.slice();
     }

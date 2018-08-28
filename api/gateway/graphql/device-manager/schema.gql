@@ -39,7 +39,7 @@ input BasicInfoTag {
 "Tag's attribute"
 input TagAttribute {
   "attribute name"
-  name: String
+  key: String
   "attribute value"
   value: String
 }

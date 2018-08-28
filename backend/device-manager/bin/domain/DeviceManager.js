@@ -119,13 +119,14 @@ class DeviceManager {
   }
 
   addAttributeToTag$({args, jwt}, authToken){
+    console.log(args)
     return eventSourcing.eventStore.emitEvent$(
       new Event({
-        eventType: "attributeToTagAdded",
+        eventType: "AttributeToTagAdded",
         eventTypeVersion: 1,
         aggregateType: "DeviceTag",
         aggregateId: Date.now(),
-        data: args.input,
+        data: args,
         user: authToken.preferred_username
       })
     )
@@ -139,14 +140,16 @@ class DeviceManager {
     .catch(err => this.errorHandler$(err));
   }
 
-  handleAttributeToTagAdded$(){
+  handleAttributeToTagAdded$(evt){
+    console.log(evt.data);
+    // return Rx.Observable.of(evt.data);
+    return DeviceManagerDA.addAttributeToTag(evt.data)
 
   }
  
 
   deleteAttributeFromTag$({args, jwt}, authToken){
     console.log("addAttributeToTag", args);
-    return Rx.Observable.defer
   }
 
 
