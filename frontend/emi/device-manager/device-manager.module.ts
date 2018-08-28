@@ -7,6 +7,7 @@ import { FuseWidgetModule } from '../../../core/components/widget/widget.module'
 import { DeviceManagerService } from './device-manager.service';
 import { DeviceManagerComponent } from './device-manager.component';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
+import { UppercaseDirective } from './directives/device-manager.directive';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
   ],
   declarations: [
     DeviceManagerComponent,
-    TagDetailComponent
+    TagDetailComponent,
+    UppercaseDirective
   ],
   providers: [
     DeviceManagerService, DatePipe
