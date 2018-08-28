@@ -133,12 +133,16 @@ class GraphQlService {
       },
       {
         aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.deleteTag"
+      },
+      {
+        aggregateType: "DeviceTag",
         messageType: "gateway.graphql.mutation.addAttributeToTag"
       },
       {
         aggregateType: "DeviceTag",
         messageType: "gateway.graphql.mutation.deleteAttributeFromTag"
-      }
+      }     
     ];
   }
 
@@ -160,6 +164,10 @@ class GraphQlService {
         fn: deviceManager.persistBasicInfoTag$,
         obj: deviceManager
       },
+      "gateway.graphql.mutation.deleteTag": {
+        fn: deviceManager.deleteTag$,
+        obj: deviceManager
+      },
       "gateway.graphql.mutation.addAttributeToTag":{
         fn: deviceManager.addAttributeToTag$,
         obj: deviceManager
@@ -167,7 +175,7 @@ class GraphQlService {
       "gateway.graphql.mutation.deleteAttributeFromTag": {
         fn: deviceManager.deleteAttributeFromTag$,
         obj: deviceManager
-      }
+      }      
     };
   }
 

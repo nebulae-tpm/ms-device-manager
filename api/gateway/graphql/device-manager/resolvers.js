@@ -67,6 +67,17 @@ module.exports = {
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
     },
+    deviceManagerDeleteTag(root, args, context){
+      return context.broker.forwardAndGetReply$(
+        "DeviceTag",
+        "gateway.graphql.mutation.deleteTag",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        // .catch(err => handleError$(err, "persistBasicInfoTag"))
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
+    },
     deviceManagerAddAttributeToTag(root, args, context){
       return context.broker.forwardAndGetReply$(
         "DeviceTag",

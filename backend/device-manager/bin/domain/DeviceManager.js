@@ -88,7 +88,34 @@ class DeviceManager {
     console.log("========>", evt, "<=============");
     // return Rx.Observable.of(evt);
     return DeviceManagerDA.updateTag$(evt.data)
-    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerUpdatedSubscriptioin', result.ops))
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerBasicTagInfoCreated', result.ops))
+  }
+
+  deleteTag$({ args, jwt }, authToken){
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "TagRemoved",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args,
+        user: authToken.preferred_username
+      })
+    )
+      .map(r => {
+        return {
+          code: 200,
+          message: "deleteTag$"
+        }
+      })
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
+  }
+
+  handleTagRemoved$(evt){
+    return DeviceManagerDA.deleteTag$(evt.data)
+    .do(r => console.log( `${r.result.n} documents removed` ))
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerTagRemoved', result.ops))
   }
 
   addAttributeToTag$({args, jwt}, authToken){
@@ -113,7 +140,7 @@ class DeviceManager {
   }
 
   handleAttributeToTagAdded$(){
-    
+
   }
  
 

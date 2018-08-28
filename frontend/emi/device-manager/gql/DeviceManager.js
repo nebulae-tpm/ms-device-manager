@@ -39,6 +39,16 @@ export const PersistBasicInfoTag = gql`
     }
   }
 `;
+export const RemoveTag = gql`
+mutation removeTag(
+  $tagName: String!){
+	deviceManagerDeleteTag(
+    tagName: $tagName
+  ){
+    code
+    message
+  }
+}`;
 
 export const addAttributeToTag = gql`
   mutation addAttributeToTag($tagName: String!, $input: TagAttribute) {
@@ -46,5 +56,5 @@ export const addAttributeToTag = gql`
       code
       message
     }
-  }
-`;
+  }`;
+

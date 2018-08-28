@@ -138,6 +138,14 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
   deleteElementFromTable(tag: any){
     console.log('Deleting => ', tag.name);
+    this.deviceManagerService.RemoveTagElement(tag.name)
+    .subscribe(
+      ok => {
+        this.dataSource.data = this.dataSource.data.filter(e => e.name !== tag.name).slice();
+      },
+      error => console.log(error),
+      () => console.log("Stream Finished")
+    );
   }
 
   onNewTag(){

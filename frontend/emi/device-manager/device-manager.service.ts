@@ -7,7 +7,8 @@ import {
   DeviceManagerHelloWorldSubscription,
   getTagByPages,
   PersistBasicInfoTag,
-  addAttributeToTag
+  addAttributeToTag,
+  RemoveTag
 } from './gql/DeviceManager';
 
 @Injectable()
@@ -64,6 +65,16 @@ export class DeviceManagerService {
         input: basicInfoTag
       },
       errorPolicy: 'all'
+    });
+  }
+
+  RemoveTagElement(TagToRemove: string){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: RemoveTag,
+      variables: {
+        tagName: TagToRemove
+      }
     });
   }
 

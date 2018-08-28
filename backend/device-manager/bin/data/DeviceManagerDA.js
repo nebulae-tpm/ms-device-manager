@@ -89,9 +89,9 @@ class DeviceManagerDA {
     ));
   }
 
-  static deleteTag$(name){
+  static deleteTag$({tagName}){
     const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.defer(() => collection.deleteOne( {name: name} ));
+    return Rx.Observable.defer(() => collection.deleteOne( {name: tagName} ));
   }
 
   static getOneTag$(namw){
