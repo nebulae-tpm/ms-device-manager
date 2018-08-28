@@ -62,7 +62,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     this.tagForm.get('basicTagInfo.name').setValue(this.tagElement.name);
     this.tagForm.get('basicTagInfo.type').setValue(this.tagElement.type);
 
-    this.tagTypesOptions = dataInjected.tagTypes;
+    this.tagTypesOptions = dataInjected.tagTypes ? dataInjected.tagTypes : [];
     console.log('TAG INJECTED ==> ', dataInjected);
   }
 
