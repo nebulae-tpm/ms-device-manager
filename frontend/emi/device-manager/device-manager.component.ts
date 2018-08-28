@@ -141,6 +141,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     this.deviceManagerService.RemoveTagElement(tag.name)
     .subscribe(
       ok => {
+
         this.dataSource.data = this.dataSource.data.filter(e => e.name !== tag.name).slice();
       },
       error => console.log(error),
