@@ -22,17 +22,6 @@ module.exports = {
   //// QUERY ///////
 
   Query: {
-    getHelloWorldFrommsnamecamel(root, args, context) {
-      return broker
-        .forwardAndGetReply$(
-          "HelloWorld",
-          "gateway.graphql.query.getHelloWorldFrommsnamecamel",
-          { root, args, jwt: context.encodedToken },
-          2000
-        )
-        .mergeMap(response => getResponseFromBackEnd$(response))
-        .toPromise();
-    },
     getTags(root, args, context) {
         return broker.forwardAndGetReply$(
             "Device",
@@ -137,31 +126,14 @@ module.exports = {
 
   },
   //// SUBSCRIPTIONS ///////
-  Subscription: {
-    msnamecamelHelloWorldSubscription: {
-      subscribe: withFilter(
-        (payload, variables, context, info) => {
-          return pubsub.asyncIterator("msnamecamelHelloWorldSubscription");
-        },
-        (payload, variables, context, info) => {
-          return true;
-        }
-      )
-    }
-  }
+  // Subscription: {
+
+  // }
 };
 
 //// SUBSCRIPTIONS SOURCES ////
 const eventDescriptors = [
-  {
-    backendEventName: "msnamecamelHelloWorldEvent",
-    gqlSubscriptionName: "msnamecamelHelloWorldSubscription",
-    dataExtractor: evt => evt.data, // OPTIONAL, only use if needed
-    onError: (error, descriptor) =>
-      console.log(`Error processing ${descriptor.backendEventName}`), // OPTIONAL, only use if needed
-    onEvent: (evt, descriptor) =>
-      console.log(`Event of type  ${descriptor.backendEventName} arraived`) // OPTIONAL, only use if needed
-  }
+
 ];
 
 /**

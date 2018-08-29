@@ -138,11 +138,7 @@ class GraphQlService {
    */
   getSubscriptionDescriptors() {   
     return [
-      //Sample incoming request, please remove
-      {
-        aggregateType: "HelloWorld",
-        messageType: "gateway.graphql.query.getHelloWorldFrommsnamecamel"
-      },
+
       {
         aggregateType: "Device",
         messageType: "gateway.graphql.query.getTagsTypes"
@@ -187,11 +183,6 @@ class GraphQlService {
    */
   generateFunctionMap() {    
     return {
-      //Sample incoming request, please remove
-      "gateway.graphql.query.getHelloWorldFrommsnamecamel": {
-        fn: deviceManager.getHelloWorld$,
-        obj: deviceManager
-      },
       "gateway.graphql.query.getTagsTypes": {
         fn: deviceManager.getTagsTypes$,
         obj: deviceManager

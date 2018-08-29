@@ -23,30 +23,9 @@ export class DeviceManagerService {
   constructor(private gateway: GatewayService) {
   }
 
-  /**
-   * Hello World sample, please remove
-   */
-  getHelloWorld$() {
-    return this.gateway.apollo
-      .watchQuery<any>({
-        query: getHelloWorld,
-        fetchPolicy: "network-only"
-      })
-      .valueChanges.map(
-        resp => resp.data.getHelloWorldFrommsnamecamel.sn
-      );
-  }
 
-  /**
-  * Hello World subscription sample, please remove
-  */
- getEventSourcingMonitorHelloWorldSubscription$(): Observable<any> {
-  return this.gateway.apollo
-    .subscribe({
-      query: DeviceManagerHelloWorldSubscription
-    })
-    .map(resp => resp.data.msnamecamelHelloWorldSubscription.sn);
-}
+
+
 
   fecthTagTypes() {
     return this.gateway.apollo

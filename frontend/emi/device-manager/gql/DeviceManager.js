@@ -2,14 +2,7 @@ import gql from "graphql-tag";
 
 // We use the gql tag to parse our query string into a query document
 
-//Hello world sample, please remove
-export const getHelloWorld = gql`
-  query getHelloWorldFrommsnamecamel{
-    getHelloWorldFrommsnamecamel{
-      sn
-    }
-  }
-`;
+
 
 export const getAllTagTypes = gql`
 query getTagTypes{
@@ -29,13 +22,7 @@ export const getTagByPages = gql`
   }
 `;
 
-//Hello world sample, please remove
-export const DeviceManagerHelloWorldSubscription = gql`
-  subscription{
-    msnamecamelHelloWorldSubscription{
-      sn
-  }
-}`;
+
 
 export const PersistBasicInfoTag = gql`
   mutation persistBasicInfoTag($input: BasicInfoTag) {

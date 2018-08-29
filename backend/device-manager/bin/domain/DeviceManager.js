@@ -42,18 +42,7 @@ class DeviceManager {
     return Rx.Observable.of('Some process for HelloWorld event');
   }
 
-  initHelloWorldEventGenerator(){
-    Rx.Observable.interval(1000)
-    .take(10)
-    .mergeMap(id => DeviceManagerDA.getHelloWorld$())    
-    .mergeMap(evt => {
-      return broker.send$(MATERIALIZED_VIEW_TOPIC, 'msnamecamelHelloWorldEvent',evt);
-    }).subscribe(
-      (evt) => console.log('Gateway GraphQL sample event sent, please remove'),
-      (err) => console.error('Gateway GraphQL sample event sent ERROR, please remove'),
-      () => console.log('Gateway GraphQL sample event sending STOPPED, please remove'),
-    );
-  }
+
 
   getTags$({ args, jwt }, authToken){
     console.log("getTags", args);

@@ -99,7 +99,7 @@ class PubSubBroker {
             Rx.Observable.from(topics)
                 .filter(topicName => Object.keys(this.listeningTopics).indexOf(topicName) === -1)
                 .mergeMap(topicName => {
-                    const subscriptionName = `${topicName}_msname`;
+                    const subscriptionName = `${topicName}_device-manager`;
 
                     return this.getSubscription$(topicName, subscriptionName)
                         .map(subsription => { 
