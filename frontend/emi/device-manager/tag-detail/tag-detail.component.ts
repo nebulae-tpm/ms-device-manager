@@ -156,25 +156,32 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     }
   }
   saveBasicTagInfo(){
-    
+
     const tagFormRawValue = this.tagForm.getRawValue();
     const basicInfoTag = {
       name: tagFormRawValue.basicTagInfo.name,
       type: tagFormRawValue.basicTagInfo.type
     };
-    let saveTagSubscription: Subscription;
+    let saveTagSubscription;
 
+    this.dataInjected.action === 'creation'
+      ? saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag)
+      : saveTagSubscription = Rx.Observable.of({})
+        .pipe(
+          filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
+          mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag))
+        );
 
-    if (this.dataInjected.action === 'creation'){
-      saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag);
-    }else if(this.dataInjected.action === 'editing'){
-      saveTagSubscription = Rx.Observable.of({})
-      .pipe(
-        filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
-        mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag) )
-      );
-    }
-    
+    // if (this.dataInjected.action === 'creation'){
+    //   saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag);
+    // }else if (this.dataInjected.action === 'editing'){
+    //   saveTagSubscription = Rx.Observable.of({})
+    //   .pipe(
+    //     filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
+    //     mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag) )
+    //   );
+    // }
+
     this.basicInfoTagChecked = true;
     saveTagSubscription.subscribe(
       (result) => {
