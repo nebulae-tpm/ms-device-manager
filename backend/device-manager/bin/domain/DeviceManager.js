@@ -110,6 +110,7 @@ class DeviceManager {
     console.log("handleBasicInfoTagEdited", data);
     return DeviceManagerDA.updateTag$(data.tagName, data.input );
   }
+  
 
   getTagsTypes$({ args, jwt }, authToken){
     return DeviceManagerDA.getTagTypes$()
