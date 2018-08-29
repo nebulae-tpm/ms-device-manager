@@ -109,6 +109,17 @@ module.exports = {
         // .catch(err => handleError$(err, "persistBasicInfoTag"))
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
+    },
+    deviceManagerEditBasicTagInfo(root, args, context){
+      return context.broker.forwardAndGetReply$(
+        "DeviceTag",
+        "gateway.graphql.mutation.editBasicTagInfo",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        // .catch(err => handleError$(err, "persistBasicInfoTag"))
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
     }
 
   },

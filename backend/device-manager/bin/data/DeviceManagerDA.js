@@ -84,10 +84,10 @@ class DeviceManagerDA {
     return Rx.Observable.defer(() => collection.save({...tag}));
   }
 
-  static updateTag$(tag){
+  static updateTag$(tagName, tag){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.updateOne(
-      {name: tag.name},
+      {name: tagName},
       { $set: { ...tag} },
       {upsert: true}
     ));

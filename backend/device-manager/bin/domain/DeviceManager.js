@@ -18,7 +18,7 @@ let instance;
 
 class DeviceManager {
   constructor() {
-    this.initHelloWorldEventGenerator();
+    // this.initHelloWorldEventGenerator();
   }
 
   /**
@@ -55,7 +55,7 @@ class DeviceManager {
   }
 
   getTags$({ args, jwt }, authToken){
-    console.log(args);
+    console.log("getTags", args);
     return DeviceManagerDA.getTags$(0,10, undefined, undefined, undefined)
     .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
     .catch(err => this.errorHandler$(err));
@@ -84,6 +84,32 @@ class DeviceManager {
       .catch(err => this.errorHandler$(err));
   }
 
+  editBasicTagInfo$({ args, jwt }, authToken){
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "BasicInfoTagEdited",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args,
+        user: authToken.preferred_username
+      })
+    )
+      .map(r => {
+        return {
+          code: 200,
+          message: "editBasicTagInfo$"
+        }
+      })
+      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+      .catch(err => this.errorHandler$(err));
+  }
+
+  handleBasicInfoTagEdited$({data}){
+    console.log("handleBasicInfoTagEdited", data);
+    return DeviceManagerDA.updateTag$(data.tagName, data.input );
+  }
+
   getTagsTypes$({ args, jwt }, authToken){
     return DeviceManagerDA.getTagTypes$()
     .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
@@ -91,7 +117,7 @@ class DeviceManager {
   }
 
   handleBasicTagInfoCreated$(evt){
-    return DeviceManagerDA.updateTag$(evt.data)
+    return DeviceManagerDA.createTag$(evt.data)
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerBasicTagInfoCreated', result.ops))
   }
 
@@ -117,8 +143,8 @@ class DeviceManager {
   }
 
   handleTagRemoved$(evt){
+    console.log("handleTagRemoved", evt.data);
     return DeviceManagerDA.deleteTag$(evt.data)
-    .do(r => console.log( `${r.result.n} documents removed` ))
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'DeviceManagerTagRemoved', result.ops))
   }
 
@@ -145,7 +171,7 @@ class DeviceManager {
   }
 
   handleTagAttributeAdded$(evt){
-    console.log(evt.data);
+    console.log("handleTagAttributeAdded", evt.data);
     // return Rx.Observable.of(evt.data);
     return DeviceManagerDA.addAttributeToTag(evt.data)
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeAdded', result.ops))
@@ -154,7 +180,7 @@ class DeviceManager {
 
   deleteTagAttribute$({args, jwt}, authToken){
 
-    console.log(args);
+    console.log("deleteTagAttribute", args);
     return eventSourcing.eventStore.emitEvent$(
       new Event({
         eventType: "TagAttributeRemoved",
@@ -178,7 +204,6 @@ class DeviceManager {
   handleTagAttributeRemoved$(evt){
     console.log("handleTagAttributeRemoved", evt.data);
     return DeviceManagerDA.deleteTagAttribute$(evt.data)
-    .do( r => console.log(r.result))
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeRemoved', result.ops))
   }
 

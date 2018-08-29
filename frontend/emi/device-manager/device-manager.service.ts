@@ -10,7 +10,8 @@ import {
   addAttributeToTag,
   RemoveTag,
   RemoveTagAttribute,
-  getAllTagTypes
+  getAllTagTypes,
+  EditBAsicTagInfo
 } from './gql/DeviceManager';
 
 @Injectable()
@@ -77,6 +78,17 @@ export class DeviceManagerService {
         input: basicInfoTag
       },
       errorPolicy: 'all'
+    });
+  }
+
+  editBasicTagInfo(tagName: string, basicInfoTag: {name: string , type: string}){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: EditBAsicTagInfo,
+      variables: {
+        tagName: tagName,
+        input: basicInfoTag
+      }
     });
   }
 

@@ -132,6 +132,10 @@ class EventStoreService {
       TagAttributeRemoved: {
         fn: deviceManagerDA.handleTagAttributeRemoved$,
         obj: deviceManagerDA
+      },
+      BasicInfoTagEdited: {
+        fn: deviceManagerDA.handleBasicInfoTagEdited$,
+        obj: deviceManagerDA
       }
     };
   }
@@ -158,6 +162,10 @@ class EventStoreService {
       {
         aggregateType: "DeviceTag",
         eventType: "TagAttributeRemoved"
+      },
+      {
+        aggregateType: "DeviceTag",
+        eventType: "BasicInfoTagEdited"
       }
     ]
   }

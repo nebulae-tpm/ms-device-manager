@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs/Observable';
 import { TagAttribute, Tag } from './../device-manager-tag-helpers';
 import { DeviceManagerService } from '../device-manager.service';
 import { Component, OnDestroy, OnInit, ElementRef, Inject, InjectionToken, ViewChild, NgZone } from '@angular/core';
@@ -6,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { FuseTranslationLoaderService } from '../../../../core/services/translation-loader.service';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
-import {take} from 'rxjs/operators';
+import { take, filter, mergeMap } from 'rxjs/operators';
 import { MatTableDataSource, MatPaginator, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { locale as english } from '../i18n/en';
 import { locale as spanish } from '../i18n/es';
@@ -54,11 +55,12 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<TagDetailComponent>,
     private deviceManagerService: DeviceManagerService,
-    @Inject(MAT_DIALOG_DATA) private dataInjected: {tag: Tag, tagTypes: string[] },
+    @Inject(MAT_DIALOG_DATA) private dataInjected: {action: string, tag: Tag, tagTypes: string[] },
     private translationLoader: FuseTranslationLoaderService
    ) {
     this.translationLoader.loadTranslations(english, spanish);
     this.tagElement = dataInjected.tag;
+
     this.tagForm.get('basicTagInfo.name').setValue(this.tagElement.name);
     this.tagForm.get('basicTagInfo.type').setValue(this.tagElement.type);
 
@@ -91,7 +93,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   deleteElementFromTable(tagAttribute: TagAttribute) {
-    console.log(this.tagElement.name, tagAttribute.key);
     this.deviceManagerService.removeTagAttribute(this.tagElement.name, tagAttribute.key)
         .subscribe(
           ok => { },
@@ -155,19 +156,33 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     }
   }
   saveBasicTagInfo(){
+    
     const tagFormRawValue = this.tagForm.getRawValue();
     const basicInfoTag = {
       name: tagFormRawValue.basicTagInfo.name,
       type: tagFormRawValue.basicTagInfo.type
     };
-    console.log(basicInfoTag);
-    this.deviceManagerService.createTagElement$(basicInfoTag).subscribe(
+    let saveTagSubscription: Subscription;
+
+
+    if (this.dataInjected.action === 'creation'){
+      saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag);
+    }else if(this.dataInjected.action === 'editing'){
+      saveTagSubscription = Rx.Observable.of({})
+      .pipe(
+        filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
+        mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag) )
+      );
+    }
+    
+    this.basicInfoTagChecked = true;
+    saveTagSubscription.subscribe(
       (result) => {
-        console.log(result);
-        this.basicInfoTagChecked = true;
+        console.log('basicInfoTagChecked', result);
       },
       (error) => console.log(error),
       () => console.log()
     );
+
   }
 }

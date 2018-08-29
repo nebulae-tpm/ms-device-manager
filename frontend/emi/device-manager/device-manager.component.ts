@@ -141,6 +141,10 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         },
         tagTypes: this.deviceManagerService.tagTypes
       }
+    })
+    .afterClosed()
+    .subscribe( response => {
+      console.log(response);
     });
   }
 

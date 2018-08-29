@@ -61,6 +61,8 @@ type Subscription {
 type Mutation{
   "Create or update new tag"
   persistBasicInfoTag(input: BasicInfoTag): DeviceManagerCommandResponse
+  "edit basic Tag info"
+  deviceManagerEditBasicTagInfo(tagName: String, input: BasicInfoTag): DeviceManagerCommandResponse
   "Delete a tag registry"
   deviceManagerDeleteTag(tagName: String):DeviceManagerCommandResponse
   "Add an attribute to Tag"
