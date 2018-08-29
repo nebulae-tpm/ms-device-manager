@@ -153,7 +153,7 @@ jobs:
             mkdir ~/nebulae/backend
             cp ~/nebulae/go/mbinit ~/nebulae/repo/backend/device-manager/
             export DOCKERHUB_IMAGE=device-manager.backend.device-manager
-            export DOCKERHUB_TAG=0.0.13
+            export DOCKERHUB_TAG=0.0.14
             gitChanged backend/device-manager || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/device-manager/
             gitChanged backend/device-manager || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/device-manager || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
