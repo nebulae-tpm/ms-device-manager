@@ -152,27 +152,27 @@ class EventStoreService {
 
       //Sample for assoc events and aggregates, please remove
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "BasicInfoTagCreated"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "TagRemoved"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "TagAttributeAdded"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "TagAttributeRemoved"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "BasicInfoTagEdited"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         eventType: "TagAttributeEdited"
       }
     ]

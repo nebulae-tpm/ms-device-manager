@@ -69,7 +69,7 @@ class DeviceManager {
       new Event({
         eventType: "BasicInfoTagCreated",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args.input,
         user: authToken.preferred_username
@@ -90,7 +90,7 @@ class DeviceManager {
       new Event({
         eventType: "BasicInfoTagEdited",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args,
         user: authToken.preferred_username
@@ -128,7 +128,7 @@ class DeviceManager {
       new Event({
         eventType: "TagRemoved",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args,
         user: authToken.preferred_username
@@ -155,7 +155,7 @@ class DeviceManager {
       new Event({
         eventType: "TagAttributeAdded",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args,
         user: authToken.preferred_username
@@ -186,7 +186,7 @@ class DeviceManager {
       new Event({
         eventType: "TagAttributeRemoved",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args,
         user: authToken.preferred_username
@@ -213,7 +213,7 @@ class DeviceManager {
       new Event({
         eventType: "TagAttributeEdited",
         eventTypeVersion: 1,
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         aggregateId: Date.now(),
         data: args,
         user: authToken.preferred_username

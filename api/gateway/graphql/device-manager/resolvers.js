@@ -35,7 +35,7 @@ module.exports = {
     },
     getTags(root, args, context) {
         return broker.forwardAndGetReply$(
-            "DeviceTag",
+            "Device",
             "gateway.graphql.query.getTags",
             { root, args, jwt: context.encodedToken },
             2000
@@ -45,7 +45,7 @@ module.exports = {
     },
     deviceManagerGetTagTypes(root, args, context){
       return broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.query.getTagsTypes",
         { root, args, jwt: context.encodedToken },
         2000
@@ -68,7 +68,7 @@ module.exports = {
       //   ["business-manager"]
       // )
       return context.broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.mutation.persistBasicInfoTag",
         { root, args, jwt: context.encodedToken },
         2000
@@ -79,7 +79,7 @@ module.exports = {
     },
     deviceManagerDeleteTag(root, args, context){
       return context.broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.mutation.deleteTag",
         { root, args, jwt: context.encodedToken },
         2000
@@ -90,7 +90,7 @@ module.exports = {
     },
     deviceManagerAddAttributeToTag(root, args, context){
       return context.broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.mutation.addAttributeToTag",
         { root, args, jwt: context.encodedToken },
         2000
@@ -101,7 +101,7 @@ module.exports = {
     },
     deviceManagerDeleteTagAttribute(root, args, context){
       return context.broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.mutation.deleteTagAttribute",
         { root, args, jwt: context.encodedToken },
         2000
@@ -112,7 +112,7 @@ module.exports = {
     },
     deviceManagerEditBasicTagInfo(root, args, context){
       return context.broker.forwardAndGetReply$(
-        "DeviceTag",
+        "Device",
         "gateway.graphql.mutation.editBasicTagInfo",
         { root, args, jwt: context.encodedToken },
         2000
@@ -126,7 +126,7 @@ module.exports = {
       return (
         context.broker
           .forwardAndGetReply$(
-            "DeviceTag",
+            "Device",
             "gateway.graphql.mutation.editTagAttribute",
             { root, args, jwt: context.encodedToken }, 2000)
           // .catch(err => handleError$(err, "persistBasicInfoTag"))

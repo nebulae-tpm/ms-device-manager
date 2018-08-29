@@ -124,39 +124,39 @@ class GraphQlService {
         messageType: "gateway.graphql.query.getHelloWorldFrommsnamecamel"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.query.getTagsTypes"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.query.getTags"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.persistBasicInfoTag"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.deleteTag"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.addAttributeToTag"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.deleteTagAttribute"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.getTagsTypes"
       },
       { 
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.editBasicTagInfo"
       },
       {
-        aggregateType: "DeviceTag",
+        aggregateType: "Device",
         messageType: "gateway.graphql.mutation.editTagAttribute"
       }
     ];
