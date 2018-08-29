@@ -63,7 +63,10 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
     this.deviceManagerService.fecthTagTypes()
       .subscribe(
-        result => this.deviceManagerService.tagTypes = result,
+        result => {
+          console.log('quering by tag types ==>', result );
+          this.deviceManagerService.tagTypes = result;
+        },
         error => console.log(error),
         () => console.log("Finished !!")
       );
