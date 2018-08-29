@@ -41,7 +41,6 @@ class DeviceManager {
     return Rx.Observable.of('Some process for HelloWorld event');
   }
 
-
   initHelloWorldEventGenerator(){
     Rx.Observable.interval(1000)
     .take(10)
