@@ -151,6 +151,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       }
     })
     .afterClosed()
+    .filter((r: {tag: Tag, originalName: string}) => r && r.tag.name !== '' && r.tag.type !== '')
     .subscribe( (response: {tag: Tag, originalName: string}) => {
       console.log(response);
       const index = this.dataSource.data.findIndex(e => e.name === response.originalName);
