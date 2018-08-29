@@ -10,8 +10,8 @@
       </div>
     </mat-toolbar>
 
-    <div mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
-      <div *ngIf="!basicInfoTagChecked" formGroupName="basicTagInfo" class="example-container">
+    <div *ngIf="!basicInfoTagChecked" mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
+      <div formGroupName="basicTagInfo" class="example-container">
         <!-- <form name="basicInfoTagForm" [formGroup]="basicInfoTagForm" class="business w-100-p" fxLayout="column" fxFlex> -->
         <mat-form-field>
           <input matInput placeholder="{{ 'DIALOG.FORM_NAME'  | translate }}" formControlName="name" required>
@@ -26,7 +26,7 @@
         </mat-autocomplete>
 
         <div style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
-          <button mat-fab color="primary" (click)="saveBasicTagInfo()" [disabled]="!tagForm.valid">
+          <button mat-fab (click)="saveBasicTagInfo()" [disabled]="!tagForm.valid">
             <mat-icon aria-label="Example icon-button with a heart icon">check</mat-icon>
           </button>
         </div>
@@ -90,7 +90,7 @@
     </mat-table>
 
     <div *ngIf="basicInfoTagChecked" style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
-      <button mat-fab color="primary" (click)="addNewAttribute()">
+      <button mat-fab (click)="addNewAttribute()">
             <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
         </button>
     </div>

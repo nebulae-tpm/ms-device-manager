@@ -122,7 +122,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   loadRowDataInDataTable$(tags: Tag[]){
-    if (tags.length > 0){
+    if ( tags && tags.length > 0){
       return Rx.Observable.from(tags)
       .pipe(
         map((tag) =>  this.dataSource.data.push(tag)),
