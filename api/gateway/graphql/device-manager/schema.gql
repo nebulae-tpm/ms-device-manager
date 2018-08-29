@@ -69,4 +69,6 @@ type Mutation{
   deviceManagerAddAttributeToTag( tagName: String!, input: TagAttribute): DeviceManagerCommandResponse
   "Delete an attribute from a tag"
   deviceManagerDeleteTagAttribute(tagName: String!, tagAttributeName: String!): DeviceManagerCommandResponse
+  "Edit a Tag attribute"
+  deviceManagerEditTagAttribute(tagName: String!, tagAttributeName: String!, input: TagAttribute ): DeviceManagerCommandResponse
 }

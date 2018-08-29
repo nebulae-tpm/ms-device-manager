@@ -154,6 +154,10 @@ class GraphQlService {
       { 
         aggregateType: "DeviceTag",
         messageType: "gateway.graphql.mutation.editBasicTagInfo"
+      },
+      {
+        aggregateType: "DeviceTag",
+        messageType: "gateway.graphql.mutation.editTagAttribute"
       }
     ];
   }
@@ -198,6 +202,10 @@ class GraphQlService {
       },
       "gateway.graphql.mutation.editBasicTagInfo": {
         fn: deviceManager.editBasicTagInfo$,
+        obj: deviceManager
+      },
+      "gateway.graphql.mutation.editTagAttribute": {
+        fn: deviceManager.editTagAttribute$,
         obj: deviceManager
       }
     };

@@ -11,7 +11,8 @@ import {
   RemoveTag,
   RemoveTagAttribute,
   getAllTagTypes,
-  EditBAsicTagInfo
+  EditBAsicTagInfo,
+  editTagAttribute
 } from './gql/DeviceManager';
 
 @Injectable()
@@ -121,6 +122,18 @@ export class DeviceManagerService {
       variables: {
         tagName: tagName,
         tagAttributeName: tagAttributeName
+      }
+    });
+  }
+
+  editTagAttribute(tagName: string, tagAttributeName: string, input: {key: string, value: string}){
+    return this.gateway.apollo
+    .mutate<any>({
+      mutation: editTagAttribute,
+      variables: {
+        tagName: tagName,
+        tagAttributeName: tagAttributeName,
+        input: input
       }
     });
   }

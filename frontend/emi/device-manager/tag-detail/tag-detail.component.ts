@@ -50,6 +50,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   tagElement: Tag;
+  originalName: string;
 
 
   constructor(
@@ -65,12 +66,12 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     this.tagForm.get('basicTagInfo.type').setValue(this.tagElement.type);
 
     this.tagTypesOptions = dataInjected.tagTypes ? dataInjected.tagTypes : [];
+    this.originalName = dataInjected.tag.name;
     console.log('TAG INJECTED ==> ', dataInjected);
   }
 
 
   ngOnInit() {
-
     this.dataSource.data =  this.dataInjected.tag.attributes;
     if (this.dataSource.data.length === 0){
       const defaultTagAttribute = {
@@ -90,6 +91,14 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  closeDialog() {
+    this.tagElement.attributes = this.dataSource.data;
+    this.dialogRef.close({
+      tag: this.tagElement,
+      originalName: this.originalName
+    });
   }
 
   deleteElementFromTable(tagAttribute: TagAttribute) {
@@ -121,21 +130,26 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   finishEditing(tagAttribute: TagAttribute){
-    console.log(tagAttribute);
-    if (tagAttribute.currentValue.key && tagAttribute.currentValue.value){
+    let updateCreateTagAttributeObservable: Observable<any>;
 
+
+    if (tagAttribute.currentValue.key && tagAttribute.currentValue.value){
       tagAttribute.editing = false;
+
+      console.log(this.tagElement, tagAttribute);
+      tagAttribute.key === '' && tagAttribute.value === ''
+        ? updateCreateTagAttributeObservable = this.deviceManagerService
+          .addAttributeToTag(this.tagElement.name, { key: tagAttribute.currentValue.key, value: tagAttribute.currentValue.value })
+        : updateCreateTagAttributeObservable = this.deviceManagerService
+          .editTagAttribute(this.tagElement.name, tagAttribute.key, { key: tagAttribute.currentValue.key, value: tagAttribute.currentValue.value });
       tagAttribute.key = tagAttribute.currentValue.key;
       tagAttribute.value = tagAttribute.currentValue.value;
-
-      this.deviceManagerService
-      .addAttributeToTag(this.tagElement.name, {key: tagAttribute.key, value: tagAttribute.value})
-      .subscribe(
-        result => console.log(result),
-        error => console.log(error),
-        () => console.log("Stream finished")
-      );
-
+      updateCreateTagAttributeObservable
+        .subscribe(
+          result => console.log(result),
+          error => console.log(error),
+          () => console.log("Stream finished")
+        );
       this.dataSource.data = this.dataSource.data.slice();
     }
   }
@@ -155,41 +169,32 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       this.dataSource.data = this.dataSource.data;
     }
   }
-  saveBasicTagInfo(){
 
+  saveBasicTagInfo(){
+    let saveTagObservable;
     const tagFormRawValue = this.tagForm.getRawValue();
     const basicInfoTag = {
       name: tagFormRawValue.basicTagInfo.name,
       type: tagFormRawValue.basicTagInfo.type
     };
-    let saveTagSubscription;
 
-    this.dataInjected.action === 'creation'
-      ? saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag)
-      : saveTagSubscription = Rx.Observable.of({})
+    this.dataInjected.action === 'create'
+      ? saveTagObservable = this.deviceManagerService.createTagElement$(basicInfoTag)
+      : saveTagObservable = Rx.Observable.of({})
         .pipe(
           filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
           mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag))
         );
 
-    // if (this.dataInjected.action === 'creation'){
-    //   saveTagSubscription = this.deviceManagerService.createTagElement$(basicInfoTag);
-    // }else if (this.dataInjected.action === 'editing'){
-    //   saveTagSubscription = Rx.Observable.of({})
-    //   .pipe(
-    //     filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
-    //     mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag) )
-    //   );
-    // }
-
     this.basicInfoTagChecked = true;
-    saveTagSubscription.subscribe(
+    this.tagElement.name = basicInfoTag.name;
+    this.tagElement.type = basicInfoTag.type;
+    saveTagObservable.subscribe(
       (result) => {
         console.log('basicInfoTagChecked', result);
       },
       (error) => console.log(error),
       () => console.log()
     );
-
   }
 }

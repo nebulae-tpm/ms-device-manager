@@ -11,6 +11,7 @@ const {
   DefaultError
 } = require("../tools/customError");
 
+
 /**
  * Singleton instance
  */
@@ -149,7 +150,6 @@ class DeviceManager {
   }
 
   addAttributeToTag$({args, jwt}, authToken){
-    console.log(args)
     return eventSourcing.eventStore.emitEvent$(
       new Event({
         eventType: "TagAttributeAdded",
@@ -204,6 +204,34 @@ class DeviceManager {
   handleTagAttributeRemoved$(evt){
     console.log("handleTagAttributeRemoved", evt.data);
     return DeviceManagerDA.deleteTagAttribute$(evt.data)
+    .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeRemoved', result.ops))
+  }
+
+  editTagAttribute$({args, jwt}, authToken){
+    return eventSourcing.eventStore.emitEvent$(
+      new Event({
+        eventType: "TagAttributeEdited",
+        eventTypeVersion: 1,
+        aggregateType: "DeviceTag",
+        aggregateId: Date.now(),
+        data: args,
+        user: authToken.preferred_username
+      })
+    )
+    .map(r => {
+      return {
+        code: 200,
+        message: "editTagAttribute$"
+      }
+    })
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
+  }
+
+  handleTagAttributeEdited$(evt){
+    console.log("handleTagAttributeEdited", evt.data);
+    return DeviceManagerDA.editTagAttribute$(evt.data)
+    .do(r => console.log(r.result))  
     .mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, 'handleTagAttributeRemoved', result.ops))
   }
 

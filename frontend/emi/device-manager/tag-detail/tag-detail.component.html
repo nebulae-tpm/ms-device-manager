@@ -4,7 +4,7 @@
       <div fxFlex fxLayout="row" fxLayoutAlign="space-between center">
         <span *ngIf="tagElement.name  === '' " class="title dialog-title">{{ 'DIALOG.ADD_TAG' | translate }}</span>
         <span *ngIf="tagElement.name  !== '' " class="title dialog-title">{{ 'DIALOG.EDIT_TAG' | translate }}</span>
-        <button mat-button class="mat-icon-button" (click)="dialogRef.close(tagElement)" aria-label="Close dialog">
+        <button mat-button class="mat-icon-button" (click)="closeDialog()" aria-label="Close dialog">
           <mat-icon>close</mat-icon>
         </button>
       </div>

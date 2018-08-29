@@ -133,7 +133,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     this.dialogRef = this.dialog.open(TagDetailComponent, {
       panelClass: 'event-form-dialog',
       data: {
-        action: action ? action : 'editing',
+        action: action ? action : 'edit',
         tag: {
           name: tag.name,
           type: tag.type,
@@ -143,8 +143,15 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       }
     })
     .afterClosed()
-    .subscribe( response => {
+    .subscribe( (response: {tag: Tag, originalName: string}) => {
       console.log(response);
+      const index = this.dataSource.data.findIndex(e => e.name === response.originalName);
+      index  !== -1
+      ? this.dataSource.data[index] = response.tag
+      : this.dataSource.data.push(response.tag);
+
+      this.dataSource.data = this.dataSource.data.slice();
+      // this.dataSource.data.filter()
     });
   }
 
@@ -162,7 +169,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   }
 
   onNewTag(){
-    this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] }, 'creation');
+    this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] }, 'create');
   }
 
 

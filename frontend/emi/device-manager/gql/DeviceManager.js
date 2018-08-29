@@ -84,3 +84,16 @@ export const addAttributeToTag = gql`
     }
   }`;
 
+export const editTagAttribute = gql`
+  mutation editTagAttribute(
+  $tagName: String!, $tagAttributeName: String!, $input: TagAttribute!){
+	deviceManagerEditTagAttribute(
+    tagName: $tagName,
+    tagAttributeName: $tagAttributeName
+    input: $input
+  ){
+    code
+    message
+  }
+}`;
+
