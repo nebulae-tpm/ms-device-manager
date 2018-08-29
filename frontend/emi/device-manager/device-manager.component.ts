@@ -119,12 +119,17 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   loadRowDataInDataTable$(tags: Tag[]){
-    return Rx.Observable.from(tags)
-    .pipe(
-      map((tag) =>  this.dataSource.data.push(tag)),
-      toArray(),
-      tap(() => this.dataSource.data = this.dataSource.data.slice())
-    );
+    if (tags.length > 0){
+      return Rx.Observable.from(tags)
+      .pipe(
+        map((tag) =>  this.dataSource.data.push(tag)),
+        toArray(),
+        tap(() => this.dataSource.data = this.dataSource.data.slice())
+      );
+    }else {
+      return Rx.Observable.empty();
+    }
+
   }
 
   editTag(tag: Tag, action: string) {
@@ -174,7 +179,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.allSubscriptions.forEach(s => s.unsubscribe());
+    // this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
 
