@@ -2,7 +2,11 @@ import gql from "graphql-tag";
 
 // We use the gql tag to parse our query string into a query document
 
-
+export const getTotalTagCount = gql`
+  query getTotalTagCount {
+    deviceManagerGetTagCount
+  }
+`;
 
 export const getAllTagTypes = gql`
 query getTagTypes{
@@ -10,8 +14,8 @@ query getTagTypes{
 }`;
 
 export const getTagByPages = gql`
-  query getTagsByPages($page: Int!, $count: Int!) {
-    getTags(page: $page, count: $count) {
+  query getTagsByPages($page: Int!, $count: Int!, $filterText: String, $sortColumn: String, $sortOrder: String  ) {
+    getTags(page: $page, count: $count, filterText: $filterText, sortColumn: $sortColumn, sortOrder: $sortOrder ) {
       name
       type
       attributes {

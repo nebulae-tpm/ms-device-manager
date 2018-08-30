@@ -41,9 +41,11 @@ input TagAttribute {
 
 type Query {
   # "return Tags Array using paginator methods"
-  getTags(page: Int!, count: Int! ): [DeviceManagerTag]
+  getTags(page: Int!, count: Int!, filterText: String, sortColumn: String, sortOrder: String): [DeviceManagerTag]
   "get all Tag types"
   deviceManagerGetTagTypes: [String]
+  "get the total tag count"
+  deviceManagerGetTagCount: Int
 }
 
 type Mutation{

@@ -26,8 +26,8 @@
         </mat-autocomplete>
 
         <div style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
-          <button mat-fab (click)="saveBasicTagInfo()" [disabled]="!tagForm.valid">
-            <mat-icon aria-label="Example icon-button with a heart icon">check</mat-icon>
+          <button mat-mini-fab (click)="saveBasicTagInfo()" [disabled]="!tagForm.valid">
+            <mat-icon>check</mat-icon>
           </button>
         </div>
         <!-- </form> -->
@@ -76,7 +76,7 @@
             <button *ngIf="tag.editing" (click)="finishEditing(tag)" mat-icon-button [disabled]="tag.currentValue.key ==='' || !tag.currentValue.key || tag.currentValue.value === '' || !tag.currentValue.value">
               <mat-icon>check_circle</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="deleteElementFromTable(tag)">
+            <button mat-icon-button (click)="deleteElementFromTable(tag)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -90,8 +90,12 @@
     </mat-table>
 
     <div *ngIf="basicInfoTagChecked" style="margin-top: 10px" fxLayout="row" fxLayoutAlign="space-around center">
-      <button mat-fab (click)="addNewAttribute()">
+      <!-- <button mat-fab (click)="addNewAttribute()">
             <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+        </button> -->
+
+        <button mat-mini-fab (click)="addNewAttribute()">
+          <mat-icon>add</mat-icon>
         </button>
     </div>
 

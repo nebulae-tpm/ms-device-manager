@@ -62,9 +62,7 @@ class DeviceManagerDA {
         .skip(count * page)
         .limit(count)
         .toArray()
-    ).map(val => {
-      return val;
-    });
+    );
   }
  
   // save a tag document
@@ -116,7 +114,7 @@ class DeviceManagerDA {
     return Rx.Observable.defer(() => collection.findOne( {name: name} ));
   }
 
-  static getCollectionsize$(){
+  static getTotalTagCount$(){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.count());
   }

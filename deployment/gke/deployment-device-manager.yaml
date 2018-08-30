@@ -13,7 +13,7 @@ spec:
         app: device-manager
     spec:      
       containers:
-      - image: nebulaetpm/device-manager.backend.device-manager:0.0.16
+      - image: nebulaetpm/device-manager.backend.device-manager:0.0.17
         name: device-manager
         volumeMounts:
         - name: google-application-credentials

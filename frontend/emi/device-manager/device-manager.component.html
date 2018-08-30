@@ -87,7 +87,13 @@
         </mat-row>
 
       </mat-table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      <mat-paginator #paginator
+        [length]="tableSize"
+        [pageIndex]="0"
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        >
+      </mat-paginator>
 
     </div>
     <!-- / CONTENT CARD -->

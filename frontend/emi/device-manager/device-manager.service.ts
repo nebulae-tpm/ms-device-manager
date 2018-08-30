@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import * as Rx from 'rxjs';
 import { GatewayService } from '../../../api/gateway.service';
 import {
+  getTotalTagCount,
   getTagByPages,
   PersistBasicInfoTag,
   addAttributeToTag,
@@ -22,7 +23,15 @@ export class DeviceManagerService {
   }
 
 
-
+  fecthTotalTagCount$() {
+    return this.gateway.apollo
+      .query<any>({
+        query: getTotalTagCount,
+        fetchPolicy: 'network-only',
+        errorPolicy: 'all'
+      })
+      .map(r => r.data.deviceManagerGetTagCount);
+  }
 
 
   fecthTagTypes() {
@@ -41,7 +50,10 @@ export class DeviceManagerService {
         query: getTagByPages,
         variables: {
           page: page,
-          count: count
+          count: count,
+          filterText: filterText,
+          sortColumn: sortColumn,
+          sortOrder: sortOrder
         }
       })
       .map(resp => resp.data.getTags);

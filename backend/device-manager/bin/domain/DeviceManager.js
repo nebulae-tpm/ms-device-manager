@@ -22,14 +22,19 @@ class DeviceManager {
   }
 
 
-
+  getTagCount$({ args, jwt }, authToken){
+    console.log(args);
+    return DeviceManagerDA.getTotalTagCount$()
+    .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
+    .catch(err => this.errorHandler$(err));
+  }
 
 
 
 
   getTags$({ args, jwt }, authToken){
     console.log("getTags", args);
-    return DeviceManagerDA.getTags$(0,10, undefined, undefined, undefined)
+    return DeviceManagerDA.getTags$(args.page, args.count, args.filterText, args.sortColumn, args.sortOrder)
     .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
     .catch(err => this.errorHandler$(err));
 

@@ -138,7 +138,10 @@ class GraphQlService {
    */
   getSubscriptionDescriptors() {   
     return [
-
+      {
+        aggregateType: "Device",
+        messageType: "gateway.graphql.query.getTagCount"
+      },
       {
         aggregateType: "Device",
         messageType: "gateway.graphql.query.getTagsTypes"
@@ -183,6 +186,10 @@ class GraphQlService {
    */
   generateFunctionMap() {    
     return {
+      "gateway.graphql.query.getTagCount": {
+        fn: deviceManager.getTagCount$,
+        obj: deviceManager
+      },
       "gateway.graphql.query.getTagsTypes": {
         fn: deviceManager.getTagsTypes$,
         obj: deviceManager

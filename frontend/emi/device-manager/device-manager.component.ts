@@ -29,10 +29,7 @@ export interface TableTags{
 export class DeviceManagerComponent implements OnInit, OnDestroy {
   allSubscriptions: Subscription[] = [];
 
-
-
   dialogRef: any;
-
   displayedColumns: string[] = ['attribute', 'value', 'actions'];
   dataSource = new MatTableDataSource<Tag>();
 
@@ -60,7 +57,29 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    // this.dataSource.paginator = this.paginator;
+    console.log(this.paginator);
 
+
+    /**
+     * query to knoe the total tag count
+     */
+
+     this.deviceManagerService.fecthTotalTagCount$()
+     .subscribe(
+       result => {
+         console.log("fecthTotalTagCount$", result);
+        this.tableSize = result;
+       },
+       error => console.log(error),
+       () => console.log("fetching toal tal count completed!!")
+
+     );
+
+
+    /**
+     * query to fetch for all the tag types
+     */
     this.deviceManagerService.fecthTagTypes()
       .subscribe(
         result => {
@@ -71,20 +90,22 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         () => console.log("Finished !!")
       );
 
-    this.dataSource.paginator = this.paginator;
-
+    /**
+     * Initial query to show firts tags
+     */
     this.deviceManagerService.getTagsByPages$(0, 0)
     .pipe(
       mergeMap((tags: Tag[]) => this.loadRowDataInDataTable$(tags))
     )
     .subscribe(
-      (response) => {
-        console.log(response);
-      },
+      (response) => {  },
       (error) => console.log(error),
-      () => console.log('Completed !!!!!')
+      () => console.log(' initial Tag fetching Completed !!!!!')
     );
 
+    /**
+     * subscription to listen the filter text
+     */
     this.allSubscriptions.push(
       Rx.Observable.fromEvent(this.filter.nativeElement, 'keyup')
       .pipe(
@@ -98,22 +119,28 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (filterText) => {
+          console.log("tableSize", this.tableSize);
           console.log(this.filterText);
-          this.dataSource.data.length = 100;
-          this.dataSource.data = this.dataSource.data.slice();
         },
         (error) => console.log(error),
         () => console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
       )
     );
 
+    /**
+     * suscription to listen the paginator changes
+     */
     this.allSubscriptions.push(
-      this.paginator.page.subscribe(pageChanged => {
-        this.page = pageChanged.pageIndex;
-        this.count = pageChanged.pageSize;
-        console.log(this.page, this.count);
-
-      })
+      this.paginator.page
+      .pipe(
+        mergeMap(pageChanged => {
+          this.page = pageChanged.pageIndex;
+          this.count = pageChanged.pageSize;
+          return this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder);
+        }),
+        mergeMap((arrayResult => this.loadRowDataInDataTable$(arrayResult)))
+      )
+      .subscribe( () => { }, error => console.log(error), () => console.log("pageChangedSubscription Finished!!") )
     );
 
   }
@@ -122,6 +149,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
 
   loadRowDataInDataTable$(tags: Tag[]){
+    this.dataSource.data = [];
     if ( tags && tags.length > 0){
       return Rx.Observable.from(tags)
       .pipe(
@@ -160,11 +188,11 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       : this.dataSource.data.push(response.tag);
 
       this.dataSource.data = this.dataSource.data.slice();
-      
+
       // this.deviceManagerService.tagTypes.findIndex(t => t === response.tag.type) === -1
       //   ? this.deviceManagerService.tagTypes.push(response.tag.type)
       //   : console.log();
-        
+
     });
   }
 

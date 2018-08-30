@@ -32,6 +32,16 @@ module.exports = {
         .mergeMap(response => getResponseFromBackEnd$(response))
         .toPromise();
     },
+    deviceManagerGetTagCount(root, args, context) {
+      return broker.forwardAndGetReply$(
+        "Device",
+        "gateway.graphql.query.getTagCount",
+        { root, args, jwt: context.encodedToken },
+        2000
+      )
+        .mergeMap(response => getResponseFromBackEnd$(response))
+        .toPromise();
+    },
     deviceManagerGetTagTypes(root, args, context){
       return broker.forwardAndGetReply$(
         "Device",
