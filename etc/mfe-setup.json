@@ -4,18 +4,18 @@
         "src": "frontend/emi/device-manager",
         "groups": [
             {
-              "id": "SYSTEM",
-              "icon": "location_searching",
-              "translate": {
-                "en": "System",
-                "es": "Sistema"
-              },
-              "priority": 900
+                "id": "DEVICES",
+                "icon": "location_searching",
+                "translate": {
+                    "en": "Devices",
+                    "es": "Dispositivos"
+                },
+                "priority": 1000
             }
           ],
         "contents": [
             {
-                "groupId": "SYSTEM",
+                "groupId": "DEVICES",
                 "id": "device-manager",
                 "icon": "settings_applications",
                 "translate": {
