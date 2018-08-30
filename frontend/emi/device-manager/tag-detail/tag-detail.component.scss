@@ -31,10 +31,13 @@
     z-index: 9999;
   }
 
-  .events-table {
+  .tag-attributes-table {
     flex: 1 1 auto;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    overflow: auto;
+    overflow: scroll;
+    min-height: 280px;
+    max-height: 280px;
+    height: 280px;
 
     .mat-header-row {
       min-height: 50px;
@@ -50,6 +53,8 @@
     }
   }
 }
+
+
 
 .example-container {
   display: flex;
