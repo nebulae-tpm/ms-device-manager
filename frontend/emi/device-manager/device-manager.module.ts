@@ -1,3 +1,4 @@
+import { ForbiddenNamesValidator } from './evice-manager-directive';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../core/modules/shared.module';
@@ -25,7 +26,8 @@ const routes: Routes = [
   declarations: [
     DeviceManagerComponent,
     TagDetailComponent,
-    UppercaseDirective
+    UppercaseDirective,
+    ForbiddenNamesValidator
   ],
   providers: [
     DeviceManagerService, DatePipe

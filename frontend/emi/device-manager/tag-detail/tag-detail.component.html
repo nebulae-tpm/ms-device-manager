@@ -43,7 +43,7 @@
         <mat-header-cell *cdkHeaderCellDef>{{ 'DIALOG.TABLE_ATTRIBUTE' | translate }}</mat-header-cell>
         <mat-cell *cdkCellDef="let tag">
           <mat-form-field [ngClass]="{'no-underline': !tag.editing}" floatPlaceholder="{{ tag.editing? 'float': 'never' }}">
-            <input class="form-control" required [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_ATTRIBUTE' | translate }}" [(ngModel)]="tag.currentValue.key"
+            <input class="form-control" required  [readonly]="!tag.editing" placeholder="{{ 'DIALOG.TABLE_ATTRIBUTE' | translate }}" [(ngModel)]="tag.currentValue.key"
               matInput>
           </mat-form-field>
         </mat-cell>

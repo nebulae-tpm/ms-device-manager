@@ -32,14 +32,14 @@ export interface TableTags{
 
 export class TagDetailComponent implements OnInit, OnDestroy {
 
+  forbiddenTagNamesArray: string[] = ['RAM'];
+
   tagForm: FormGroup = new FormGroup({
     basicTagInfo: new FormGroup({
       name: new FormControl(null, [Validators.required]),
       type: new FormControl(null, [Validators.required])
     })
   });
-
-
 
   tagTypesOptions: string[] = [];
   filteredOptions: Rx.Observable<string[]>;
@@ -142,6 +142,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
           .addAttributeToTag(this.tagElement.name, { key: tagAttribute.currentValue.key, value: tagAttribute.currentValue.value })
         : updateCreateTagAttributeObservable = this.deviceManagerService
           .editTagAttribute(this.tagElement.name, tagAttribute.key, { key: tagAttribute.currentValue.key, value: tagAttribute.currentValue.value });
+
       tagAttribute.key = tagAttribute.currentValue.key;
       tagAttribute.value = tagAttribute.currentValue.value;
       updateCreateTagAttributeObservable
@@ -197,6 +198,14 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       (error) => console.log(error),
       () => console.log('saveBasicTagInfo FINISHED!!')
     );
+  }
+
+  forbiddenTagNames(control: FormControl): {[s: string]: boolean} {
+    console.log(control.value);
+    if (this.forbiddenTagNamesArray.indexOf(control.value) !== -1) {
+      return {'nameIsForbidden': true};
+    }
+    return null;
   }
 }
 
