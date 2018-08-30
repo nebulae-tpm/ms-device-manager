@@ -19,28 +19,11 @@ let instance;
 
 class DeviceManager {
   constructor() {
-    // this.initHelloWorldEventGenerator();
-  }
-
-  /**
-   *  HelloWorld Query, please remove
-   *  this is a queiry form GraphQL
-   */
-  getHelloWorld$(request) {
-    console.log(`request: request`)
-    return DeviceManagerDA.getHelloWorld$()
-      .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
-      .catch(err => this.errorHandler$(err));
   }
 
 
-  /**
-   * Handle HelloWorld Query, please remove
-   * This in an Event HAndler for Event- events
-   */
-  handleHelloWorld$(evt) {
-    return Rx.Observable.of('Some process for HelloWorld event');
-  }
+
+
 
 
 
