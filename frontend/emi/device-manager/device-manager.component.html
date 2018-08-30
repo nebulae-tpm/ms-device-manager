@@ -25,13 +25,13 @@
           <mat-icon class="secondary-text">search</mat-icon>
         </label>
         <mat-form-field floatPlaceholder="never" fxFlex="1 0 auto">
-          <input id="search" matInput #filter placeholder="Search">
+          <input id="search" matInput #filter placeholder="{{ 'GENERAL_TABLE.SEARCH' | translate }}">
         </mat-form-field>
       </div>
       <!-- / SEARCH -->
 
       <button mat-raised-button (click)="onNewTag()" class="add-product-button mat-white-bg my-12 mt-sm-0">
-        <span>ADD NEW TAG</span>
+        <span>{{ 'GENERAL_TABLE.NEW_TAG' | translate }}</span>
       </button>
 
     </div>

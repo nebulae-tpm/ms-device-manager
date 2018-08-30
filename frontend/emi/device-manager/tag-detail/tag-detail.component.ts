@@ -171,7 +171,8 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   saveBasicTagInfo(){
-    let saveTagObservable;
+    console.log('saveBasicTagInfo');
+    let saveTagObservable: Observable<any>;
     const tagFormRawValue = this.tagForm.getRawValue();
     const basicInfoTag = {
       name: tagFormRawValue.basicTagInfo.name,
@@ -182,19 +183,19 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       ? saveTagObservable = this.deviceManagerService.createTagElement$(basicInfoTag)
       : saveTagObservable = Rx.Observable.of({})
         .pipe(
-          filter(() => this.dataInjected.tag.name !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
-          mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.dataInjected.tag.name, basicInfoTag))
+          filter(() => this.originalName !== basicInfoTag.name || this.dataInjected.tag.type !== basicInfoTag.type),
+          mergeMap(() => this.deviceManagerService.editBasicTagInfo(this.originalName, basicInfoTag))
         );
 
     this.basicInfoTagChecked = true;
-    this.tagElement.name = basicInfoTag.name;
-    this.tagElement.type = basicInfoTag.type;
     saveTagObservable.subscribe(
       (result) => {
         console.log('basicInfoTagChecked', result);
+         this.tagElement.name = basicInfoTag.name;
+         this.tagElement.type = basicInfoTag.type;
       },
       (error) => console.log(error),
-      () => console.log()
+      () => console.log('saveBasicTagInfo FINISHED!!')
     );
   }
 }

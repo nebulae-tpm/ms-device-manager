@@ -160,7 +160,11 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       : this.dataSource.data.push(response.tag);
 
       this.dataSource.data = this.dataSource.data.slice();
-      // this.dataSource.data.filter()
+      
+      // this.deviceManagerService.tagTypes.findIndex(t => t === response.tag.type) === -1
+      //   ? this.deviceManagerService.tagTypes.push(response.tag.type)
+      //   : console.log();
+        
     });
   }
 

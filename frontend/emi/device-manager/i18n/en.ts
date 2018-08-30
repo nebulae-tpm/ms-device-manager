@@ -4,7 +4,9 @@ export const locale = {
     GENERAL_TABLE: {
       NAME: 'Name',
       TYPE: 'Type',
-      ACTIONS: 'Actions'
+      ACTIONS: 'Actions',
+      NEW_TAG: 'New Tag',
+      SEARCH: 'Filter'
     },
     DIALOG: {
       ADD_TAG: 'Add a TAG',
