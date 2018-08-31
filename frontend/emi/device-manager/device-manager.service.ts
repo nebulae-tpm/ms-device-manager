@@ -54,8 +54,7 @@ export class DeviceManagerService {
           sortColumn: sortColumn,
           sortOrder: sortOrder
         }
-      })
-      .map(resp => resp.data.getTags);
+      });
   }
 
 

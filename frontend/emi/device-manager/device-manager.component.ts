@@ -61,7 +61,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     /**
-     * query to knoe the total tag count
+     * query to query the total tag count
      */
 
      this.deviceManagerService.fecthTotalTagCount$()
@@ -98,6 +98,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
      */
     this.deviceManagerService.getTagsByPages$(0, 0)
     .pipe(
+      mergeMap(response => this.graphQlErrorHandler$(response)),
+      filter((response: any) => response),
+      map(data => data.getTags),
       mergeMap((tags: Tag[]) => this.loadRowDataInDataTable$(tags))
     )
     .subscribe(
