@@ -1,7 +1,7 @@
 "use strict";
 const Rx = require("rxjs");
 const eventSourcing = require("../../tools/EventSourcing")();
-const deviceManagerDA = require("../../domain/DeviceManager")();
+const deviceManagerEventConsumer = require('../../domain/DeviceManagerEventConsumer')();
 
 /**
  * Singleton instance
@@ -118,28 +118,28 @@ class EventStoreService {
 
       //Sample for handling event-sourcing events, please remove
       BasicInfoTagCreated: {
-        fn: deviceManagerDA.handleBasicTagInfoCreated$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleBasicTagInfoCreated$,
+        obj: deviceManagerEventConsumer
       },
       TagRemoved:{
-        fn: deviceManagerDA.handleTagRemoved$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleTagRemoved$,
+        obj: deviceManagerEventConsumer
       },
       TagAttributeAdded: {
-        fn: deviceManagerDA.handleTagAttributeAdded$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleTagAttributeAdded$,
+        obj: deviceManagerEventConsumer
       },
       TagAttributeRemoved: {
-        fn: deviceManagerDA.handleTagAttributeRemoved$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleTagAttributeRemoved$,
+        obj: deviceManagerEventConsumer
       },
       BasicInfoTagEdited: {
-        fn: deviceManagerDA.handleBasicInfoTagEdited$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleBasicInfoTagEdited$,
+        obj: deviceManagerEventConsumer
       },
       TagAttributeEdited: {
-        fn: deviceManagerDA.handleTagAttributeEdited$,
-        obj: deviceManagerDA
+        fn: deviceManagerEventConsumer.handleTagAttributeEdited$,
+        obj: deviceManagerEventConsumer
       }
     };
   }

@@ -68,7 +68,7 @@ module.exports = {
       // )
       return context.broker.forwardAndGetReply$(
         "Device",
-        "gateway.graphql.mutation.persistBasicInfoTag",
+        "gateway.graphql.mutation.createtBasicInfoTag",
         { root, args, jwt: context.encodedToken },
         2000
       )

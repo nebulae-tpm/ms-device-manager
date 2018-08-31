@@ -152,7 +152,7 @@ class GraphQlService {
       },
       {
         aggregateType: "Device",
-        messageType: "gateway.graphql.mutation.persistBasicInfoTag"
+        messageType: "gateway.graphql.mutation.createtBasicInfoTag"
       },
       {
         aggregateType: "Device",
@@ -198,8 +198,8 @@ class GraphQlService {
         fn: deviceManager.getTags$,
         obj: deviceManager
       },
-      "gateway.graphql.mutation.persistBasicInfoTag":{
-        fn: deviceManager.persistBasicInfoTag$,
+      "gateway.graphql.mutation.createtBasicInfoTag":{
+        fn: deviceManager.createtBasicInfoTag$,
         obj: deviceManager
       },
       "gateway.graphql.mutation.deleteTag": {
