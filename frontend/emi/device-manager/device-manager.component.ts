@@ -5,7 +5,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { FuseTranslationLoaderService } from './../../../core/services/translation-loader.service';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
-import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
+import { TranslateService } from "@ngx-translate/core";
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatSnackBar } from '@angular/material';
 import { locale as english } from './i18n/en';
 import { locale as spanish } from './i18n/es';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
@@ -50,25 +51,27 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private deviceManagerService: DeviceManagerService,
-    private translationLoader: FuseTranslationLoaderService
+    private translationLoader: FuseTranslationLoaderService,
+    private translatorService: TranslateService,
+    private snackBar: MatSnackBar
    ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
-    // this.dataSource.paginator = this.paginator;
-    console.log(this.paginator);
-
-
     /**
      * query to knoe the total tag count
      */
 
      this.deviceManagerService.fecthTotalTagCount$()
+     .pipe(
+       mergeMap(response => this.graphQlErrorHandler$(response)),
+       filter((response: any) => response),
+       map(data => data.deviceManagerGetTagCount)
+     )
      .subscribe(
        result => {
-         console.log("fecthTotalTagCount$", result);
         this.tableSize = result;
        },
        error => console.log(error),
@@ -119,8 +122,6 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (filterText) => {
-          console.log("tableSize", this.tableSize);
-          console.log(this.filterText);
         },
         (error) => console.log(error),
         () => console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
@@ -164,7 +165,6 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   }
 
   editTag(tag: Tag, action: string) {
-    console.log('TAG =>', tag);
     tag.attributes = tag.attributes ? tag.attributes.map(item => ({ ...item, currentValue: { key: item.key, value: item.value } })) : [];
     this.dialogRef = this.dialog.open(TagDetailComponent, {
       panelClass: 'event-form-dialog',
@@ -181,23 +181,16 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     .afterClosed()
     .filter((r: {tag: Tag, originalName: string}) => r && r.tag.name !== '' && r.tag.type !== '')
     .subscribe( (response: {tag: Tag, originalName: string}) => {
-      console.log(response);
       const index = this.dataSource.data.findIndex(e => e.name === response.originalName);
       index  !== -1
       ? this.dataSource.data[index] = response.tag
       : this.dataSource.data.push(response.tag);
 
       this.dataSource.data = this.dataSource.data.slice();
-
-      // this.deviceManagerService.tagTypes.findIndex(t => t === response.tag.type) === -1
-      //   ? this.deviceManagerService.tagTypes.push(response.tag.type)
-      //   : console.log();
-
     });
   }
 
   deleteElementFromTable(tag: any){
-    console.log('Deleting => ', tag.name);
     this.deviceManagerService.RemoveTagElement(tag.name)
     .subscribe(
       ok => {
@@ -213,6 +206,23 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     this.editTag({ name: '', type: '', attributes: [{key: '', value: '', editing: true, currentValue: { key: '', value: ''}}] }, 'create');
   }
 
+  graphQlErrorHandler$(grapqlResponse: any) {
+    if (grapqlResponse.errors) {
+      return Rx.Observable.of(grapqlResponse)
+        .pipe(
+          filter(response => response.errors),
+          map(response => response.errors[0].message),
+          mergeMap(error => this.translatorService.get(`ERRORS.${error.code}`)),
+          map((msg) => {
+            this.snackBar.open(msg, '', { duration: 5000 });
+            return null;
+          })
+        );
+    } else {
+      return Rx.Observable.of(grapqlResponse.data);
+    }
+
+  }
 
   ngOnDestroy() {
     // this.allSubscriptions.forEach(s => s.unsubscribe());

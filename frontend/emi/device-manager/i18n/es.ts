@@ -16,6 +16,9 @@ export const locale = {
       FORM_TYPE: "Tipo",
       TABLE_ATTRIBUTE: "Attributo",
       TABLE_VALUE: "Valor"
+    },
+    ERRORS: {
+      17002 : 'Permiso denegado'
     }
   }
 };

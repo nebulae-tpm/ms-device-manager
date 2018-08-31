@@ -5,6 +5,10 @@ const eventSourcing = require("../tools/EventSourcing")();
 const Event = require("@nebulae/event-store").Event;
 const DeviceManagerDA = require("../data/DeviceManagerDA");
 const broker = require("../tools/broker/BrokerFactory")();
+const RoleValidator = require("../tools/RoleValidator");
+const {
+  PERMISSION_DENIED_ERROR
+} = require("../tools/ErrorCodes");
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 const {
   CustomError,
@@ -20,11 +24,17 @@ let instance;
 class DeviceManager {
   constructor() {
   }
-
-
+  
   getTagCount$({ args, jwt }, authToken){
     console.log(args);
-    return DeviceManagerDA.getTotalTagCount$()
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "getTagCount$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+    .mergeMap(() =>  DeviceManagerDA.getTotalTagCount$())   
     .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
     .catch(err => this.errorHandler$(err));
   }

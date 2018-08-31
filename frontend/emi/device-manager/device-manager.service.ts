@@ -29,8 +29,7 @@ export class DeviceManagerService {
         query: getTotalTagCount,
         fetchPolicy: 'network-only',
         errorPolicy: 'all'
-      })
-      .map(r => r.data.deviceManagerGetTagCount);
+      });
   }
 
 
