@@ -49,7 +49,7 @@ class DeviceManager {
     return RoleValidator.checkPermissions$(
       authToken.realm_access.roles,
       "DeviceManager",
-      "getTagCount$",
+      "getTags$",
       PERMISSION_DENIED_ERROR,
       ["operator"]
     )
@@ -67,17 +67,24 @@ class DeviceManager {
   }
 
   createtBasicInfoTag$({ args, jwt }, authToken) {
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "BasicInfoTagCreated",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args.input,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "createtBasicInfoTag$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "BasicInfoTagCreated",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args.input,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
@@ -89,17 +96,24 @@ class DeviceManager {
   }
 
   editBasicTagInfo$({ args, jwt }, authToken) {
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "BasicInfoTagEdited",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "editBasicTagInfo$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "BasicInfoTagEdited",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
@@ -111,23 +125,37 @@ class DeviceManager {
   }
 
   getTagsTypes$({ args, jwt }, authToken) {
-    return DeviceManagerDA.getTagTypes$()
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "getTagsTypes$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => DeviceManagerDA.getTagTypes$())
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.errorHandler$(err));
   }
 
   deleteTag$({ args, jwt }, authToken) {
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "TagRemoved",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "deleteTag$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "TagRemoved",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
@@ -139,17 +167,24 @@ class DeviceManager {
   }
 
   addAttributeToTag$({ args, jwt }, authToken) {
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "TagAttributeAdded",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "addAttributeToTag$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "TagAttributeAdded",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
@@ -161,18 +196,24 @@ class DeviceManager {
   }
 
   deleteTagAttribute$({ args, jwt }, authToken) {
-    console.log("deleteTagAttribute", args);
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "TagAttributeRemoved",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "deleteTagAttribute$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "TagAttributeRemoved",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
@@ -184,17 +225,24 @@ class DeviceManager {
   }
 
   editTagAttribute$({ args, jwt }, authToken) {
-    return eventSourcing.eventStore
-      .emitEvent$(
-        new Event({
-          eventType: "TagAttributeEdited",
-          eventTypeVersion: 1,
-          aggregateType: "Device",
-          aggregateId: Date.now(),
-          data: args,
-          user: authToken.preferred_username
-        })
-      )
+    return RoleValidator.checkPermissions$(
+      authToken.realm_access.roles,
+      "DeviceManager",
+      "editTagAttribute$",
+      PERMISSION_DENIED_ERROR,
+      ["operator"]
+    )
+      .mergeMap(() => eventSourcing.eventStore
+        .emitEvent$(
+          new Event({
+            eventType: "TagAttributeEdited",
+            eventTypeVersion: 1,
+            aggregateType: "Device",
+            aggregateId: Date.now(),
+            data: args,
+            user: authToken.preferred_username
+          })
+        ))
       .map(r => {
         return {
           code: 200,
