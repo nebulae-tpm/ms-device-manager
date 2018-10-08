@@ -25,7 +25,6 @@ class DeviceManager {
    * @param { string } authToken Decoded token
    */
   getTagCount$({ args, jwt }, authToken) {
-    console.log(args);
     return RoleValidator.checkPermissions$(
       authToken.realm_access.roles,
       "DeviceManager",
@@ -45,7 +44,6 @@ class DeviceManager {
    * @param { string } authToken decoded token
    */
   getTags$({ args, jwt }, authToken) {
-    console.log("getTags", args);
     return RoleValidator.checkPermissions$(
       authToken.realm_access.roles,
       "DeviceManager",

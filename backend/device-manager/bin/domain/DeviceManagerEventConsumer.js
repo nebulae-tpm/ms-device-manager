@@ -24,7 +24,6 @@ class UserEventConsumer {
   }
 
   handleTagRemoved$(evt) {
-    console.log("handleTagRemoved", evt.data);
     return DeviceManagerDA.deleteTag$(evt.data).mergeMap(result =>
       broker.send$(
         MATERIALIZED_VIEW_TOPIC,
@@ -34,7 +33,6 @@ class UserEventConsumer {
     );
   }
   handleTagAttributeAdded$(evt) {
-    console.log("handleTagAttributeAdded", evt.data);
     // return Rx.Observable.of(evt.data);
     return DeviceManagerDA.addAttributeToTag(evt.data).mergeMap(result =>
       broker.send$(
@@ -46,7 +44,6 @@ class UserEventConsumer {
   }
 
   handleTagAttributeRemoved$(evt) {
-    console.log("handleTagAttributeRemoved", evt.data);
     return DeviceManagerDA.deleteTagAttribute$(evt.data).mergeMap(result =>
       broker.send$(
         MATERIALIZED_VIEW_TOPIC,
@@ -57,14 +54,11 @@ class UserEventConsumer {
   }
 
   handleBasicInfoTagEdited$({ data }) {
-    console.log("handleBasicInfoTagEdited", data);
     return DeviceManagerDA.updateTag$(data.tagName, data.input);
   }
 
   handleTagAttributeEdited$(evt) {
-    console.log("handleTagAttributeEdited", evt.data);
     return DeviceManagerDA.editTagAttribute$(evt.data)
-      .do(r => console.log(r.result))
       .mergeMap(result =>
         broker.send$(
           MATERIALIZED_VIEW_TOPIC,

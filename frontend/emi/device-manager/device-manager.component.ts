@@ -75,7 +75,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         this.tableSize = result;
        },
        error => console.log(error),
-       () => console.log("fetching toal tal count completed!!")
+       () => {
+        //console.log("fetching total count completed!!")
+       }
 
      );
 
@@ -86,11 +88,12 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     this.deviceManagerService.fecthTagTypes()
       .subscribe(
         result => {
-          console.log('quering by tag types ==>', result );
           this.deviceManagerService.tagTypes = result;
         },
         error => console.log(error),
-        () => console.log("Finished !!")
+        () => {
+          //console.log("Finished !!");
+        }
       );
 
     /**
@@ -106,7 +109,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
     .subscribe(
       (response) => {  },
       (error) => console.log(error),
-      () => console.log(' initial Tag fetching Completed !!!!!')
+      () => {
+        //console.log(' initial Tag fetching Completed !!!!!')
+      }
     );
 
     /**
@@ -127,7 +132,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         (filterText) => {
         },
         (error) => console.log(error),
-        () => console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
+        () => {
+          //console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
+        }
       )
     );
 
@@ -144,7 +151,11 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         }),
         mergeMap((arrayResult => this.loadRowDataInDataTable$(arrayResult)))
       )
-      .subscribe( () => { }, error => console.log(error), () => console.log("pageChangedSubscription Finished!!") )
+      .subscribe( () => { }, 
+      error => console.log(error), 
+      () => {
+        //console.log("pageChangedSubscription Finished!!")
+      } )
     );
 
   }
@@ -201,7 +212,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         this.dataSource.data = this.dataSource.data.filter(e => e.name !== tag.name).slice();
       },
       error => console.log(error),
-      () => console.log("Stream Finished")
+      () => {
+        //console.log("Stream Finished");
+      }
     );
   }
 

@@ -18,9 +18,7 @@ export class ForbiddenNamesValidator implements Validator {
   constructor(@Attribute("validateforbiddenNames") public validateforbiddenNames: any) {}
 
   validate(control: AbstractControl): { [key: string]: any } {
-    console.log(control.value, this.validateforbiddenNames);
     const index = this.validateforbiddenNames.filter(e => e === control.value);
-    console.log(index);
 
     if (control.value) {
       return {

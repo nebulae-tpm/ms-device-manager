@@ -101,7 +101,6 @@ class DeviceManagerDA {
     ) )
   }
   static editTagAttribute$({tagName, tagAttributeName, input}){
-    console.log(tagName, tagAttributeName, input);
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.updateOne(
       { name: tagName, 'attributes.key': tagAttributeName },
