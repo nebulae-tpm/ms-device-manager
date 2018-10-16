@@ -1,9 +1,8 @@
 import { Observable } from 'rxjs/Observable';
 import { TagAttribute, Tag } from './../device-manager-tag-helpers';
 import { DeviceManagerService } from '../device-manager.service';
-import { Component, OnDestroy, OnInit, ElementRef, Inject, InjectionToken, ViewChild, NgZone } from '@angular/core';
+import { Component, OnDestroy, OnInit, Inject, ViewChild } from '@angular/core';
 import { fuseAnimations } from '../../../../core/animations';
-import { Subscription } from 'rxjs/Subscription';
 import { FuseTranslationLoaderService } from '../../../../core/services/translation-loader.service';
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
@@ -11,14 +10,8 @@ import { take, filter, mergeMap } from 'rxjs/operators';
 import { MatTableDataSource, MatPaginator, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { locale as english } from '../i18n/en';
 import { locale as spanish } from '../i18n/es';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
-
-export interface TableTags{
-  name: string;
-  type: string;
-  atttubutes: number;
-}
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -67,7 +60,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
     this.tagTypesOptions = dataInjected.tagTypes ? dataInjected.tagTypes : [];
     this.originalName = dataInjected.tag.name;
-    console.log('TAG INJECTED ==> ', dataInjected);
   }
 
 
@@ -106,7 +98,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         .subscribe(
           ok => { },
           error => console.log(error),
-          () => console.log("Stream finished")
+          () => {}
     );
     if (this.dataSource.data.length === 1) {
       this.dataSource.data = [{
@@ -125,7 +117,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
   startToEditing(tagAttribute: TagAttribute){
     tagAttribute.editing = true;
-    console.log(tagAttribute);
     this.dataSource.data = this.dataSource.data.slice();
   }
 
@@ -135,8 +126,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
     if (tagAttribute.currentValue.key && tagAttribute.currentValue.value){
       tagAttribute.editing = false;
-
-      console.log(this.tagElement, tagAttribute);
       tagAttribute.key === '' && tagAttribute.value === ''
         ? updateCreateTagAttributeObservable = this.deviceManagerService
           .addAttributeToTag(this.tagElement.name, { key: tagAttribute.currentValue.key, value: tagAttribute.currentValue.value })
@@ -147,9 +136,9 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       tagAttribute.value = tagAttribute.currentValue.value;
       updateCreateTagAttributeObservable
         .subscribe(
-          result => console.log(result),
+          result => {},
           error => console.log(error),
-          () => console.log("Stream finished")
+          () => {}
         );
       this.dataSource.data = this.dataSource.data.slice();
     }
@@ -157,7 +146,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
   addNewAttribute() {
     if (this.dataSource.data.findIndex(e => e.editing) === -1) {
-      console.log('addNewAttribute ...');
       this.dataSource.data.push({
         key: '',
         value: '',
@@ -172,7 +160,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   saveBasicTagInfo(){
-    console.log('saveBasicTagInfo');
     let saveTagObservable: Observable<any>;
     const tagFormRawValue = this.tagForm.getRawValue();
     const basicInfoTag = {
@@ -191,17 +178,15 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     this.basicInfoTagChecked = true;
     saveTagObservable.subscribe(
       (result) => {
-        console.log('basicInfoTagChecked', result);
          this.tagElement.name = basicInfoTag.name;
          this.tagElement.type = basicInfoTag.type;
       },
       (error) => console.log(error),
-      () => console.log('saveBasicTagInfo FINISHED!!')
+      () => {}
     );
   }
 
   forbiddenTagNames(control: FormControl): {[s: string]: boolean} {
-    console.log(control.value);
     if (this.forbiddenTagNamesArray.indexOf(control.value) !== -1) {
       return {'nameIsForbidden': true};
     }

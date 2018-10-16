@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import * as Rx from 'rxjs';
 import { GatewayService } from '../../../api/gateway.service';
 import {
   getTotalTagCount,
@@ -39,8 +37,7 @@ export class DeviceManagerService {
         query: getAllTagTypes,
         fetchPolicy: 'network-only',
         errorPolicy: 'all'
-      })
-      .map(r => r.data.deviceManagerGetTagTypes);
+      });
   }
 
   getTagsByPages$(page: number, count: number, filterText?: string, sortColumn?: string , sortOrder?: string) {

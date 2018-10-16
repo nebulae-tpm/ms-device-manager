@@ -19,7 +19,6 @@ export class ForbiddenNamesValidator implements Validator {
 
   validate(control: AbstractControl): { [key: string]: any } {
     const index = this.validateforbiddenNames.filter(e => e === control.value);
-
     if (control.value) {
       return {
         validateforbiddenNames: false

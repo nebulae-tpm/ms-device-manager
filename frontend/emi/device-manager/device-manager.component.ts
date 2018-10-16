@@ -11,14 +11,7 @@ import { locale as english } from './i18n/en';
 import { locale as spanish } from './i18n/es';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
 import { Tag } from './device-manager-tag-helpers';
-import { mergeMap, toArray, map, tap, debounceTime, distinctUntilChanged, filter, mapTo } from 'rxjs/operators';
-
-export interface TableTags{
-  name: string;
-  type: string;
-  atttubutes: number;
-}
-
+import { mergeMap, toArray, map, tap, debounceTime, distinctUntilChanged, filter, startWith } from 'rxjs/operators';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -75,10 +68,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
         this.tableSize = result;
        },
        error => console.log(error),
-       () => {
-        //console.log("fetching total count completed!!")
-       }
-
+       () => {}
      );
 
 
@@ -86,56 +76,36 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
      * query to fetch for all the tag types
      */
     this.deviceManagerService.fecthTagTypes()
+    .pipe(
+      mergeMap(response => this.graphQlErrorHandler$(response)),
+      filter((response: any) => response),
+      map(data => data.deviceManagerGetTagTypes)
+    )
       .subscribe(
         result => {
           this.deviceManagerService.tagTypes = result;
         },
         error => console.log(error),
-        () => {
-          //console.log("Finished !!");
-        }
+        () => {}
       );
-
-    /**
-     * Initial query to show firts tags
-     */
-    this.deviceManagerService.getTagsByPages$(0, 0)
-    .pipe(
-      mergeMap(response => this.graphQlErrorHandler$(response)),
-      filter((response: any) => response),
-      map(data => data.getTags),
-      mergeMap((tags: Tag[]) => this.loadRowDataInDataTable$(tags))
-    )
-    .subscribe(
-      (response) => {  },
-      (error) => console.log(error),
-      () => {
-        //console.log(' initial Tag fetching Completed !!!!!')
-      }
-    );
 
     /**
      * subscription to listen the filter text
      */
     this.allSubscriptions.push(
       Rx.Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        filter(() => this.filter.nativeElement),
-        map(() => this.filter.nativeElement.value.trim()  ),
-        tap((filterText => this.filterText = filterText)),
-        mergeMap(() => this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder) ),
-        mergeMap((responseArray) => this.loadRowDataInDataTable$(responseArray))
-      )
-      .subscribe(
-        (filterText) => {
-        },
-        (error) => console.log(error),
-        () => {
-          //console.log("COMPLETED FILTER SUBSCRIPTION !!! ")
-        }
-      )
+        .pipe(
+          debounceTime(400),
+          startWith(''),
+          distinctUntilChanged(),
+          filter(() => this.filter.nativeElement),
+          map(() => this.filter.nativeElement.value.trim()),
+          tap((filterText => this.filterText = filterText)),
+          mergeMap(() => this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder)),
+          map(response => response.data.getTags),
+          mergeMap((responseArray) => this.loadRowDataInDataTable$(responseArray))
+        )
+        .subscribe(() => { }, (error) => console.log(error), () => { })
     );
 
     /**
@@ -143,19 +113,16 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
      */
     this.allSubscriptions.push(
       this.paginator.page
-      .pipe(
-        mergeMap(pageChanged => {
-          this.page = pageChanged.pageIndex;
-          this.count = pageChanged.pageSize;
-          return this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder);
-        }),
-        mergeMap((arrayResult => this.loadRowDataInDataTable$(arrayResult)))
-      )
-      .subscribe( () => { }, 
-      error => console.log(error), 
-      () => {
-        //console.log("pageChangedSubscription Finished!!")
-      } )
+        .pipe(
+          mergeMap(pageChanged => {
+            this.page = pageChanged.pageIndex;
+            this.count = pageChanged.pageSize;
+            return this.deviceManagerService.getTagsByPages$(this.page, this.count, this.filterText, this.sortColumn, this.sortOrder);
+          }),
+          map(response => response.data.getTags),
+          mergeMap((arrayResult => this.loadRowDataInDataTable$(arrayResult)))
+        )
+        .subscribe(() => { }, error => console.log(error), () => { })
     );
 
   }
@@ -165,6 +132,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
 
   loadRowDataInDataTable$(tags: Tag[]){
     this.dataSource.data = [];
+
     if ( tags && tags.length > 0){
       return Rx.Observable.from(tags)
       .pipe(
@@ -207,14 +175,9 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   deleteElementFromTable(tag: any){
     this.deviceManagerService.RemoveTagElement(tag.name)
     .subscribe(
-      ok => {
-
-        this.dataSource.data = this.dataSource.data.filter(e => e.name !== tag.name).slice();
-      },
+      () =>  this.dataSource.data = this.dataSource.data.filter(e => e.name !== tag.name).slice(),
       error => console.log(error),
-      () => {
-        //console.log("Stream Finished");
-      }
+      () => {}
     );
   }
 
@@ -241,7 +204,7 @@ export class DeviceManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.allSubscriptions.forEach(s => s.unsubscribe());
+    this.allSubscriptions.forEach(s => s.unsubscribe());
   }
 
 
