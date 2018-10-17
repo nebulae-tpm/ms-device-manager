@@ -1,10 +1,8 @@
 'use strict'
 
 let mongoDB = undefined;
-// const mongoDB = require('./MongoDB')();
 const Rx = require('rxjs');
-const CollectionName = "DeviceManager";//please change
-const { CustomError } = require('../tools/customError');
+const CollectionName = "DeviceManager";
 
 
 class DeviceManagerDA {
@@ -65,12 +63,20 @@ class DeviceManagerDA {
     );
   }
  
-  // save a tag document
+  /**
+   * Create a new tag document.
+   * @param {any} tag Tag object
+   */
   static createTag$(tag){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.save({...tag}));
   }
 
+  /**
+   * Updates a tag document
+   * @param {string} tagName Tag name
+   * @param {any} tag Update tag object  
+   */
   static updateTag$(tagName, tag){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.updateOne(
@@ -80,10 +86,18 @@ class DeviceManagerDA {
     ));
   }
 
+  /**
+   * Delete a tag document
+   * @param {*} param0 
+   */
   static deleteTag$({tagName}){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.deleteOne( {name: tagName} ));
   }
+  /**
+   * Delete a tag attribute from a Tag document
+   * @param {*} param0 
+   */
   static deleteTagAttribute$({tagName, tagAttributeName}){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.update(
@@ -93,6 +107,10 @@ class DeviceManagerDA {
     ))
   }
 
+  /**
+   * Inserts an attribute to the tag document
+   * @param {*} param0 
+   */
   static addAttributeToTag({tagName, input}){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.update(
@@ -100,6 +118,10 @@ class DeviceManagerDA {
       { $push: { attributes: input } }
     ) )
   }
+  /**
+   * edits a tag attribute
+   * @param {*} param0 
+   */
   static editTagAttribute$({tagName, tagAttributeName, input}){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.defer(() => collection.updateOne(
@@ -108,19 +130,15 @@ class DeviceManagerDA {
     ))
   }
 
-  static getOneTag$(namw){
-    const collection = mongoDB.db.collection(CollectionName);
-    return Rx.Observable.defer(() => collection.findOne( {name: name} ));
-  }
-
+  /**
+   * fetch the tag count
+   */
   static getTotalTagCount$(){
     const collection = mongoDB.db.collection(CollectionName);
     return Rx.Observable.fromPromise(collection.count());
   }
-
-
-
-
 }
-
+/**
+ * @returns {DeviceManagerDA}
+ */
 module.exports =  DeviceManagerDA 
