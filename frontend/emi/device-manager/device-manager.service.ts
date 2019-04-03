@@ -21,6 +21,9 @@ export class DeviceManagerService {
   }
 
 
+  /**
+     * query to query the total tag count
+     */
   fecthTotalTagCount$() {
     return this.gateway.apollo
       .query<any>({
